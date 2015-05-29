@@ -1,0 +1,27 @@
+{
+  "name": "appkr/fractal",
+  "description": "Fractal Wrapper for Laravel 5",
+  "type": "project",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Appkr",
+      "email": "juwonkim@me.com",
+      "homepage": "http://appkr.kr"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require": {
+    "php": ">=5.5.0",
+    "league/fractal": "^0.13.0@dev",
+    "illuminate/support": "5.0.*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Appkr\\Fractal\\": "src/"
+    }
+  },
+  "require-dev": {
+    "fzaninotto/faker": "^1.5@dev"
+  }
+}
