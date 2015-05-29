@@ -23,7 +23,7 @@ class Request extends FormRequest {
      * {@inheritdoc}
      */
     public function forbiddenResponse() {
-        return $this->respondForbidden();
+        return $this->respondUnauthorized();
     }
 
 }

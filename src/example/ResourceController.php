@@ -13,6 +13,10 @@ class ResourceController extends Controller {
      * @param Resource $model
      */
     public function __construct(Resource $model) {
+        // Uncomment if tymondesigns/jwt-auth is installed
+        //$this->middleware('jwt.auth');
+        //$this->middleware('jwt.refresh');
+
         $this->model = $model;
     }
 
