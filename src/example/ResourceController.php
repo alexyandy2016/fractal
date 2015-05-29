@@ -1,4 +1,6 @@
-<?php namespace Appkr\Fractal\Example;
+<?php
+
+namespace Appkr\Fractal\Example;
 
 use Appkr\Fractal\Controller;
 
@@ -13,6 +15,10 @@ class ResourceController extends Controller {
      * @param Resource $model
      */
     public function __construct(Resource $model) {
+        // Uncomment if tymondesigns/jwt-auth is installed
+        //$this->middleware('jwt.auth');
+        //$this->middleware('jwt.refresh');
+
         $this->model = $model;
     }
 
@@ -24,13 +30,13 @@ class ResourceController extends Controller {
     public function index() {
         // Respond with pagination
         return $this->respondWithPagination(
-            $this->model->with('manager')->paginate(25),
+            $this->model->with('manager')->latest()->paginate(25),
             new ResourceTransformer
         );
 
         // Respond as a collection
-        return $this->respondWithPagination(
-            $this->model->with('manager')->paginate(25),
+        return $this->respondCollection(
+            $this->model->with('manager')->latest()->get(),
             new ResourceTransformer
         );
     }
@@ -49,10 +55,12 @@ class ResourceController extends Controller {
             ['manager_id' => 1]
         );
 
-        $resource = Resource::create($data);
+        if (! $resource = Resource::create($data)) {
+            return $this->respondInternalError('Failed to create !');
+        }
 
         // respond created item with 201 status code
-        return $this->setStatusCode(201)->respondItem(
+        return $this->setResponseCode(201)->respondItem(
             $resource,
             new ResourceTransformer
         );
@@ -85,7 +93,7 @@ class ResourceController extends Controller {
         $resource = $this->model->findOrFail($id);
 
         if (! $resource->update($request->all())) {
-            return $this->respondInternalError();
+            return $this->respondInternalError('Failed to update !');
         }
 
         return $this->respondSuccess('Updated');
@@ -102,7 +110,7 @@ class ResourceController extends Controller {
         $resource = $this->model->findOrFail($id);
 
         if (! $resource->delete()) {
-            return $this->respondInternalError();
+            return $this->respondInternalError('Failed to delete !');
         }
 
         return $this->respondSuccess('Deleted');

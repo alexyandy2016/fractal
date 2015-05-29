@@ -14,14 +14,19 @@
   "require": {
     "php": ">=5.5.0",
     "league/fractal": "^0.13.0@dev",
-    "illuminate/support": "5.0.*"
+    "illuminate/support": "5.*"
+  },
+  "require-dev": {
+    "fzaninotto/faker": "^1.5@dev"
   },
   "autoload": {
     "psr-4": {
       "Appkr\\Fractal\\": "src/"
     }
   },
-  "require-dev": {
-    "fzaninotto/faker": "^1.5@dev"
+  "suggest": {
+    "barryvdh/laravel-cors": "Handle CORS issue at a javascript-based client",
+    "lucadegasperi/oauth2-server-laravel": "Use the League OAuth 2.0 server to protect your API.",
+    "tymon/jwt-auth": "Protect your API with JSON Web Tokens"
   }
 }

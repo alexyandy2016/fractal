@@ -1,8 +1,11 @@
-<?php namespace Appkr\Fractal\Example;
+<?php
+
+namespace Appkr\Fractal\Example;
 
 use Appkr\Fractal\Request;
 
-class ResourceRequest extends Request {
+class ResourceRequest extends Request
+{
 
     /**
      * @var array
@@ -17,10 +20,14 @@ class ResourceRequest extends Request {
      *
      * @return bool
      */
-    public function authorize() {
-        if ($this->isDeleteRequest()) {
-            return false;
-        }
+    public function authorize()
+    {
+        //if ($this->isUpdateRequest() or $this->isDeleteRequest()) {
+        //    $id = $this->route('resource');
+        //
+        //    return Resource::where('id', $id)
+        //        ->where('manager_id', $this->manager()->id)->exists();
+        //}
 
         return true;
     }
@@ -30,30 +37,19 @@ class ResourceRequest extends Request {
      *
      * @return array
      */
-    public function rules() {
+    public function rules()
+    {
         $rules = $this->rules;
 
         if ($this->isUpdateRequest()) {
             $rules['deprecated'] = 'boolean';
         }
 
-        if ($this->isDeleteRequest()) { }
+        if ($this->isDeleteRequest()) {
+            $rules = [];
+        }
 
         return $rules;
-    }
-
-    /**
-     * @return bool
-     */
-    private function isUpdateRequest() {
-        return in_array($this->input('_method'), ['put', 'patch']);
-    }
-
-    /**
-     * @return bool
-     */
-    private function isDeleteRequest() {
-        return $this->input('_method') == 'delete';
     }
 
 }
