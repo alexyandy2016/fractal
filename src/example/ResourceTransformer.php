@@ -42,8 +42,8 @@ class ResourceTransformer extends TransformerAbstract {
     /**
      * Include User
      *
-     * @param Resource|Resource $resource
-     * @return Fractal\Resource\Item
+     * @param Resource $resource
+     * @return
      */
     public function includeManager(Resource $resource) {
         return $this->item($resource->manager, new ManagerTransformer);

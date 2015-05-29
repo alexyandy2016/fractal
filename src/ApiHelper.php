@@ -15,7 +15,7 @@ trait ApiHelper {
      *
      * @var integer
      */
-    protected $statusCode = 200;
+    protected $responseCode = 200;
 
     /**
      * Http response headers
@@ -33,7 +33,7 @@ trait ApiHelper {
     public function respond($payload) {
         return response()->json(
             $payload,
-            $this->getStatusCode(),
+            $this->getResponseCode(),
             $this->getHeaders()
         );
     }
@@ -48,7 +48,7 @@ trait ApiHelper {
      */
     public function respondCollection(EloquentCollection $collection, $transformer = null, $headers = []) {
         $resource = new FractalCollection($collection, $this->getTransformer($transformer));
-        $payload  = app(Fractal::class)->createData($resource)->toArray();
+        $payload = app(Fractal::class)->createData($resource)->toArray();
 
         return $this->setHeaders($headers)->respond($payload);
     }
@@ -63,7 +63,7 @@ trait ApiHelper {
      */
     public function respondItem(EloquentModel $model, $transformer = null, $headers = []) {
         $resource = new FractalItem($model, $this->getTransformer($transformer));
-        $payload  = app(Fractal::class)->createData($resource)->toArray();
+        $payload = app(Fractal::class)->createData($resource)->toArray();
 
         return $this->setHeaders($headers)->respond($payload);
     }
@@ -87,6 +87,13 @@ trait ApiHelper {
         return $this->setHeaders($headers)->respond($payload);
     }
 
+    /**
+     * Respond json formatted success message
+     *
+     * @param       $message
+     * @param array $headers
+     * @return \Illuminate\Contracts\Http\Response
+     */
     public function respondSuccess($message, $headers = []) {
         $payload = $this->formatPayload($message, config('fractal.successFormat'));
 
@@ -108,12 +115,12 @@ trait ApiHelper {
             // it just defer the job to respondItem() method.
             // On receiving the job, respondItem() method does its best
             // to transform the given Elequent Model with SimpleArrayTransformer.
-            return $this->setStatusCode(201)->respondItem($primitive, null);
+            return $this->setResponseCode(201)->respondItem($primitive, null);
         }
 
         $payload = $this->formatPayload($primitive, config('fractal.successFormat'));
 
-        return $this->setHeaders($headers)->setStatusCode(201)->respond($payload);
+        return $this->setHeaders($headers)->setResponseCode(201)->respond($payload);
     }
 
     /**
@@ -123,7 +130,7 @@ trait ApiHelper {
      * @return \Illuminate\Contracts\Http\Response
      */
     public function respondNoContent($headers = []) {
-        return $this->setHeaders($headers)->setStatusCode(204)->respond(null);
+        return $this->setHeaders($headers)->setResponseCode(204)->respond(null);
     }
 
     /**
@@ -135,7 +142,7 @@ trait ApiHelper {
      */
     public function respondWithError($message = 'Unknown Error', $headers = []) {
         if ($message instanceof \Exception) {
-            $this->statusCode = $this->translateExceptionCode($message);
+            $this->responseCode = $this->translateExceptionCode($message);
             $message = $message->getMessage();
         }
 
@@ -152,7 +159,7 @@ trait ApiHelper {
      * @return \Illuminate\Contracts\Http\Response
      */
     public function respondUnauthorized($message = 'Unauthorized', $headers = []) {
-        return $this->setHeaders($headers)->setStatusCode(401)->respondWithError($message);
+        return $this->setHeaders($headers)->setResponseCode(401)->respondWithError($message);
     }
 
     /**
@@ -163,7 +170,7 @@ trait ApiHelper {
      * @return \Illuminate\Contracts\Http\Response
      */
     public function respondForbidden($message = 'Forbidden', $headers = []) {
-        return $this->setHeaders($headers)->setStatusCode(403)->respondWithError($message);
+        return $this->setHeaders($headers)->setResponseCode(403)->respondWithError($message);
     }
 
     /**
@@ -174,7 +181,7 @@ trait ApiHelper {
      * @return \Illuminate\Contracts\Http\Response
      */
     public function respondNotFound($message = 'Not Found', $headers = []) {
-        return $this->setHeaders($headers)->setStatusCode(404)->respondWithError($message);
+        return $this->setHeaders($headers)->setResponseCode(404)->respondWithError($message);
     }
 
     /**
@@ -185,7 +192,7 @@ trait ApiHelper {
      * @return \Illuminate\Contracts\Http\Response
      */
     public function respondNotAcceptable($message = 'Not Acceptable', $headers = []) {
-        return $this->setHeaders($headers)->setStatusCode(406)->respondWithError($message);
+        return $this->setHeaders($headers)->setResponseCode(406)->respondWithError($message);
     }
 
     /**
@@ -196,7 +203,7 @@ trait ApiHelper {
      * @return \Illuminate\Contracts\Http\Response
      */
     public function respondUnprocessableError($message = 'Unprocessable Entity', $headers = []) {
-        return $this->setHeaders($headers)->setStatusCode(422)->respondWithError($message);
+        return $this->setHeaders($headers)->setResponseCode(422)->respondWithError($message);
     }
 
     /**
@@ -207,26 +214,26 @@ trait ApiHelper {
      * @return \Illuminate\Contracts\Http\Response
      */
     public function respondInternalError($message = 'Internal Server Error', $headers = []) {
-        return $this->setHeaders($headers)->setStatusCode(500)->respondWithError($message);
+        return $this->setHeaders($headers)->setResponseCode(500)->respondWithError($message);
     }
 
     /**
-     * Getter for statusCode
+     * Getter for responseCode
      *
      * @return mixed
      */
-    public function getStatusCode() {
-        return $this->statusCode;
+    public function getResponseCode() {
+        return $this->responseCode;
     }
 
     /**
-     * Setter for statusCode
+     * Setter for responseCode
      *
-     * @param mixed $statusCode
+     * @param mixed $responseCode
      * @return $this
      */
-    public function setStatusCode($statusCode) {
-        $this->statusCode = $statusCode;
+    public function setResponseCode($responseCode) {
+        $this->responseCode = $responseCode;
 
         return $this;
     }
@@ -268,7 +275,7 @@ trait ApiHelper {
     public function formatPayload($message, array $format) {
         $replace = [
             ':message' => $message,
-            ':code'    => $this->getStatusCode()
+            ':code'    => $this->getResponseCode()
         ];
 
         array_walk_recursive($format, function (&$value, $key) use ($replace) {
@@ -298,12 +305,17 @@ trait ApiHelper {
      * @return int
      */
     private function translateExceptionCode($e) {
-        if (($statusCode = $this->getStatusCode()) != 200) {
+        if ($e->getCode() !== -1) {
+            return $e->getCode();
+        }
+
+        if (($statusCode = $this->getResponseCode()) != 200) {
             return $statusCode;
         }
 
         if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException
-            or $e instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException) {
+            or $e instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+        ) {
             return 404;
         }
 

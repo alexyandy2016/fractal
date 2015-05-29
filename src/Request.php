@@ -10,7 +10,7 @@ class Request extends FormRequest {
      * {@inheritdoc}
      */
     public function response(array $errors) {
-        if ($this->ajax() || $this->wantsJson()) {
+        if ($this->is('api/*')) {
             return $this->respondUnprocessableError($errors);
         }
 
@@ -23,7 +23,23 @@ class Request extends FormRequest {
      * {@inheritdoc}
      */
     public function forbiddenResponse() {
-        return $this->respondForbidden();
+        return $this->respondUnauthorized();
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isUpdateRequest() {
+        return in_array($this->input('_method'), ['put', 'patch', 'PUT', 'PATCH'])
+        or in_array($this->header('x-http-method-override'), ['put', 'patch', 'PUT', 'PATCH']);
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isDeleteRequest() {
+        return in_array($this->input('_method'), ['delete', 'DELETE'])
+        or in_array($this->header('x-http-method-override'), ['delete', 'DELETE']);
     }
 
 }
