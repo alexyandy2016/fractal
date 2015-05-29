@@ -3,6 +3,17 @@
 return [
     /*
     |--------------------------------------------------------------------------
+    | API Endpoint pattern
+    |--------------------------------------------------------------------------
+    |
+    | This value will be used to bypass CSRF token check, to determine
+    | the current request is from an API client...
+    |
+    */
+    'pattern' => 'api/*',
+
+    /*
+    |--------------------------------------------------------------------------
     | Fractal Serializer
     |--------------------------------------------------------------------------
     |
@@ -10,16 +21,24 @@ return [
     | http://fractal.thephpleague.com/serializers/
     |
     */
-    'serializer' => env('FRACTAL_SERIALIZER', 'League\Fractal\Serializer\ArraySerializer'),
+    'serializer' => \League\Fractal\Serializer\ArraySerializer::class,
 
     /*
     |--------------------------------------------------------------------------
     | Default Response Headers
     |--------------------------------------------------------------------------
     |
-    | Header can be used by the clients of the API service
-    | for various purposes.
-    | For example ['Accept' => 'Appkr']
+    | Default meta data that every resource response should include
+    |
+    */
+    'defaultMeta' => ['version' => 1],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Default Response Headers
+    |--------------------------------------------------------------------------
+    |
+    | Default response headers that every resource/simple response should includes
     |
     */
     'defaultHeaders' => [],
@@ -29,7 +48,7 @@ return [
     | Success Response Format
     |--------------------------------------------------------------------------
     |
-    | The format will be used at the ApiHelper to respond with success message.
+    | The format will be used at the ApiResponse to respond with success message.
     | respondNoContent(), respondSuccess(), respondCreated() consumes this format
     |
     */
@@ -45,7 +64,7 @@ return [
     | Error Response Format
     |--------------------------------------------------------------------------
     |
-    | The format will be used at the ApiHelper to respond with error message.
+    | The format will be used at the ApiResponse to respond with error message.
     | respondWithError(), respondForbidden()... consumes this format
     |
     */

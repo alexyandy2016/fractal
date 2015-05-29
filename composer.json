@@ -13,15 +13,22 @@
   "minimum-stability": "dev",
   "require": {
     "php": ">=5.5.0",
-    "league/fractal": "^0.13.0@dev",
-    "illuminate/support": "5.0.*"
+    "illuminate/support": "5.*",
+    "league/fractal": "^0.13.0@dev"
+  },
+  "require-dev": {
+    "fzaninotto/faker": "^1.5@dev"
   },
   "autoload": {
     "psr-4": {
       "Appkr\\Fractal\\": "src/"
-    }
+    },
+    "files": [
+      "src/helpers.php"
+    ]
   },
-  "require-dev": {
-    "fzaninotto/faker": "^1.5@dev"
+  "suggest": {
+    "barryvdh/laravel-cors": "Handle CORS issue",
+    "tymon/jwt-auth": "Protect your API with JSON Web Tokens"
   }
 }

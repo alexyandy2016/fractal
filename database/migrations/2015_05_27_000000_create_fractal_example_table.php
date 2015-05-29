@@ -3,14 +3,23 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateResourcesTable extends Migration {
+class CreateFractalExampleTable extends Migration
+{
 
     /**
      * Run the migrations.
      *
      * @return void
      */
-    public function up() {
+    public function up()
+    {
+        Schema::create('managers', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name');
+            $table->string('email');
+            $table->timestamps();
+        });
+
         Schema::create('resources', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title');
@@ -26,7 +35,9 @@ class CreateResourcesTable extends Migration {
      *
      * @return void
      */
-    public function down() {
+    public function down()
+    {
+        Schema::drop('managers');
         Schema::drop('resources');
     }
 

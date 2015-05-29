@@ -1,10 +1,12 @@
-<?php namespace Appkr\Fractal\Example;
+<?php
+
+namespace Appkr\Fractal\Example;
 
 use League\Fractal;
 use League\Fractal\TransformerAbstract;
 
-class ResourceTransformer extends TransformerAbstract {
-
+class ResourceTransformer extends TransformerAbstract
+{
     /**
      * List of resources possible to include
      *
@@ -26,27 +28,32 @@ class ResourceTransformer extends TransformerAbstract {
     /**
      * Transform single resource
      *
-     * @param Resource $resource
+     * @param \Appkr\Fractal\Example\Resource $resource
      * @return array
      */
-    public function transform(Resource $resource) {
+    public function transform(Resource $resource)
+    {
         return [
             'id'          => (int) $resource->id,
             'title'       => $resource->title,
             'description' => $resource->description,
             'deprecated'  => (bool) ($resource->deprecated == 1) ? true : false,
-            'created_at'  => (string) $resource->created_at
+            'created_at'  => (int) $resource->created_at->getTimestamp()
         ];
     }
 
     /**
      * Include User
      *
-     * @param Resource|Resource $resource
-     * @return Fractal\Resource\Item
+     * @param \Appkr\Fractal\Example\Resource $resource
+     * @return \League\Fractal\Resource\Item|null
      */
-    public function includeManager(Resource $resource) {
-        return $this->item($resource->manager, new ManagerTransformer);
-    }
+    public function includeManager(Resource $resource)
+    {
+        $manager = $resource->manager;
 
+        return $manager
+            ? $this->item($manager, new ManagerTransformer)
+            : null;
+    }
 }

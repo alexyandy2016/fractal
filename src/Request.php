@@ -1,17 +1,18 @@
-<?php namespace Appkr\Fractal;
+<?php
+
+namespace Appkr\Fractal;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class Request extends FormRequest {
-
-    use ApiHelper;
-
+class Request extends FormRequest
+{
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function response(array $errors) {
-        if ($this->ajax() || $this->wantsJson()) {
-            return $this->respondUnprocessableError($errors);
+    public function response(array $errors)
+    {
+        if (is_api_request()) {
+            return app('api.response')->unprocessableError($errors);
         }
 
         return $this->redirector->to($this->getRedirectUrl())
@@ -20,10 +21,14 @@ class Request extends FormRequest {
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function forbiddenResponse() {
-        return $this->respondForbidden();
-    }
+    protected function failedAuthorization()
+    {
+        if (is_api_request()) {
+            return app('api.response')->unauthorizedError();
+        }
 
+        return parent::failedAuthorization();
+    }
 }
