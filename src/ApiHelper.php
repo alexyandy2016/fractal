@@ -298,6 +298,10 @@ trait ApiHelper {
      * @return int
      */
     private function translateExceptionCode($e) {
+        if ($e->getCode() !== -1) {
+            return $e->getCode();
+        }
+
         if (($statusCode = $this->getStatusCode()) != 200) {
             return $statusCode;
         }
