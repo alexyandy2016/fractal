@@ -25,7 +25,7 @@
     }
   },
   "suggest": {
-    "barryvdh/laravel-cors": "Handle CORS issue when using javascript-based client's API request",
+    "barryvdh/laravel-cors": "Handle CORS issue at a javascript-based client",
     "lucadegasperi/oauth2-server-laravel": "Use the League OAuth 2.0 server to protect your API.",
     "tymon/jwt-auth": "Protect your API with JSON Web Tokens"
   }
