@@ -230,7 +230,7 @@ So, in my small project, I did it like this:
 // app/Http/Middleware/VerifyCsrfToken.php
 
 public function handle($request, Closure $next) {
-    if ($request->ajax() || $request->wantsJson()) {
+    if ($request->is('api/*')) {
         return $this->addCookieToResponse($request, $next($request));
     }
 
@@ -271,10 +271,9 @@ I highly recommend utilize [barryvdh/laravel-cors](https://github.com/barryvdh/l
 <a name="client"></a>
 ##Access API Endpoints from a Client
 
-Every API request from a client should contain the following header. If you are using auth package, add Authorization header accordingly.
+If you are using auth package, add Authorization header accordingly.
 
 ```
-Accept: application/json
 // Authorization: Bearer ...
 ```
 
