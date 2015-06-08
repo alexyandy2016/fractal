@@ -33,8 +33,8 @@ class ResourceController extends Controller {
         );
 
         // Respond as a collection
-        return $this->respondWithPagination(
-            $this->model->with('manager')->paginate(25),
+        return $this->respondCollection(
+            $this->model->with('manager')->get(),
             new ResourceTransformer
         );
     }
@@ -53,7 +53,9 @@ class ResourceController extends Controller {
             ['manager_id' => 1]
         );
 
-        $resource = Resource::create($data);
+        if (! $resource = Resource::create($data)) {
+            return $this->respondInternalError('Failed to create !');
+        }
 
         // respond created item with 201 status code
         return $this->setStatusCode(201)->respondItem(
@@ -89,7 +91,7 @@ class ResourceController extends Controller {
         $resource = $this->model->findOrFail($id);
 
         if (! $resource->update($request->all())) {
-            return $this->respondInternalError();
+            return $this->respondInternalError('Failed to update !');
         }
 
         return $this->respondSuccess('Updated');
@@ -106,7 +108,7 @@ class ResourceController extends Controller {
         $resource = $this->model->findOrFail($id);
 
         if (! $resource->delete()) {
-            return $this->respondInternalError();
+            return $this->respondInternalError('Failed to delete !');
         }
 
         return $this->respondSuccess('Deleted');

@@ -1,14 +1,14 @@
 #Fractal wrapper for Laravel 5#
-This is a package, or rather, an **opinionated/laravel-istic use case of the famous [league/fractal](https://github.com/thephpleague/fractal) package in Laravel 5 environment**. 
+This is a package, or rather, an **opinionated/laravel-istic use case of the famous [league/fractal](https://github.com/thephpleague/fractal) package in Laravel 5 environment**.
 
 This project was started to fulfill a personal RESTful API service needs. In an initial attempt to evaluate various php API packages for Laravel, I found that the features of those packages providing are well excessive for my requirement.
 
 If your requirement is simple like mine, this is the right package. But if you need more delicate package, head over to [chiraggude/awesome-laravel](https://github.com/chiraggude/awesome-laravel#restful-apis) to find a right one.
- 
+
 Using this package, I didn't want to sacrifice Laravel 5's recommended coding practices which I learned from the official documentation. And I wanted users of this project to be able to easily/freely handle/modify this package with the common knowledge/experience of Laravel 5, without having to require a package specific syntax/usage. And most importantly, I wanted he/she could build his/her API service quickly based on the examples provided.
 
 ---
- 
+
 ##Index
 
 - [Goal](#goal)
@@ -33,9 +33,9 @@ Using this package, I didn't want to sacrifice Laravel 5's recommended coding pr
 
 <a name="install"></a>
 ##Install
-This package is provided as a composer package. Define `"appkr/fractal": "0.1.*"` at your project `composer.json`'s require section and `composer update`. 
+This package is provided as a composer package. Define `"appkr/fractal": "0.1.*"` at your project `composer.json`'s require section and `composer update`.
 
-Or require it at a console.  
+Or require it at a console.
 
 ```
 composer require "appkr/fractal:0.1.*"
@@ -60,7 +60,7 @@ Configuration file is located at `config/fractal.php`.
 
 Done !
 
->**Note** This package depends upon php5.5 syntax: `Namespace\ClassName::class` instead of string reference of `'Namespace\ClassName'`. 
+>**Note** This package depends upon php5.5 syntax: `Namespace\ClassName::class` instead of string reference of `'Namespace\ClassName'`.
 
 ---
 
@@ -150,7 +150,7 @@ Best/fast way to build your service is, I think, referring the bundled examples 
 <a name="route"></a>
 ###Route (API Endpoints)
 You can define your routes just like laravel-istic way.
- 
+
 ```
 // app/Http/routes.php
 
@@ -223,7 +223,7 @@ This package follows original Fractal Transformer spec. Refer to the original [d
 <a name="csrf"></a>
 ###Work around for TokenMismatchException
 Laravel 5 throws TokenMismatchException when an client sends a post request(create, update, or delete resource) to the API endpoint. Because the clients exists separate domain or environment (e.g. android native application), no way for your server to publish csrf token to the client. It's more desirable to achieve a level of security through [tymondesigns/jwt-auth](https://github.com/tymondesigns/jwt-auth) or equivalent measures.
- 
+
 So, in my small project, I did it like this:
 
 ```
@@ -250,9 +250,9 @@ use Appkr\Fractal\ApiHelper;
 public function render($request, Exception $e) {
     if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException
         or $e instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException) {
-        return $this->respondNotFound();
+        return $this->respondNotFound('The resource you requested does not exist.');
     }
-    
+
     if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException) {
         return $this->setStatusCode(400)->respondWithError('Invalid Credentials');
     }
@@ -279,16 +279,16 @@ If you are using auth package, add Authorization header accordingly.
 
 Laravel is using method spoofing for `PUT|PATCH` and `DELETE` request, so your client should also request as so. For example if a client want to make a `PUT` request to `//host/api/v1/resource/1`, the client should send a `POST` request to the API endpoint with request body of `_method=put`.
 
-Alternative way to achieve method spoofing in Laravel is using `X-HTTP-Method-Override` request header. In this case the client also has to send a POST request but with `X-HTTP-Method-Override: PUT`. Which way to go comes down to your preference. 
+Alternative way to achieve method spoofing in Laravel is using `X-HTTP-Method-Override` request header. In this case the client also has to send a POST request but with `X-HTTP-Method-Override: PUT`. Which way to go comes down to your preference.
 
 Http verb|Endpoint address|Mandatory params|Controller method|Description
 ---|---|---|---|---
 GET|//host/api/v1/resource| |`index()`|Get a collection of resource
-GET|//host/api/v1/resource/{id}| |`show()`|Get the specified resource 
+GET|//host/api/v1/resource/{id}| |`show()`|Get the specified resource
 POST|//host/api/v1/resource| |`store()`|Create new resource
 POST|//host/api/v1/resource/{id}|`_method=put`|`update()`|Update the specified resource
 POST|//host/api/v1/resource/{id}|`_method=delete`|`delete()`|Delete the specified resource
 
 ---
 
-[The MIT License](https://raw.githubusercontent.com/appkr/fractal/master/LICENSE) 
+[The MIT License](https://raw.githubusercontent.com/appkr/fractal/master/LICENSE)
