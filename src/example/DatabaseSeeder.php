@@ -13,7 +13,6 @@ class DatabaseSeeder extends Seeder {
      * @return void
      */
     public function run() {
-        DB::statement('SET FOREIGN_KEY_CHECKS=0');
         Eloquent::unguard();
         $faker = Faker::create();
 
@@ -41,8 +40,6 @@ class DatabaseSeeder extends Seeder {
                 'deprecated'  => $faker->randomElement([0, 1])
             ]);
         }
-
-        DB::statement('SET FOREIGN_KEY_CHECKS=1');
 
         $this->command->info('resources table - example data seeded.');
 

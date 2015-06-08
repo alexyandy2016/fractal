@@ -28,13 +28,13 @@ class ResourceController extends Controller {
     public function index() {
         // Respond with pagination
         return $this->respondWithPagination(
-            $this->model->with('manager')->paginate(25),
+            $this->model->with('manager')->latest()->paginate(25),
             new ResourceTransformer
         );
 
         // Respond as a collection
         return $this->respondCollection(
-            $this->model->with('manager')->get(),
+            $this->model->with('manager')->latest()->get(),
             new ResourceTransformer
         );
     }
