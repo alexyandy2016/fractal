@@ -248,13 +248,15 @@ In case of `Illuminate\Database\Eloquent\ModelNotFoundException`, if the request
 use Appkr\Fractal\ApiHelper;
 
 public function render($request, Exception $e) {
-    if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException
-        or $e instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException) {
-        return $this->respondNotFound('The resource you requested does not exist.');
-    }
-
-    if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException) {
-        return $this->setResponseCode(400)->respondWithError('Invalid Credentials');
+    if ($request->is('api/*')) {
+        if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException
+            or $e instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException) {
+            return $this->respondNotFound('The resource you requested does not exist.');
+        }
+    
+        if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException) {
+            return $this->setResponseCode(400)->respondWithError('Invalid Credentials');
+        }
     }
 
     return parent::render($request, $e);
@@ -271,7 +273,7 @@ I highly recommend utilize [barryvdh/laravel-cors](https://github.com/barryvdh/l
 <a name="client"></a>
 ##Access API Endpoints from a Client
 
-If you are using auth package, add Authorization header accordingly.
+If you are using auth package, add Authorization header accordingly on each API request.
 
 ```
 // Authorization: Bearer ...
@@ -279,15 +281,17 @@ If you are using auth package, add Authorization header accordingly.
 
 Laravel is using method spoofing for `PUT|PATCH` and `DELETE` request, so your client should also request as so. For example if a client want to make a `PUT` request to `//host/api/v1/resource/1`, the client should send a `POST` request to the API endpoint with request body of `_method=put`.
 
-Alternative way to achieve method spoofing in Laravel is using `X-HTTP-Method-Override` request header. In this case the client also has to send a POST request but with `X-HTTP-Method-Override: PUT`. Which way to go comes down to your preference.
+Alternative way to achieve method spoofing in Laravel is using `X-HTTP-Method-Override` request header. The client has to send a POST request with `X-HTTP-Method-Override: PUT` header. 
 
-Http verb|Endpoint address|Mandatory params|Controller method|Description
+Which way to go comes down to your preference.
+
+Http verb|Endpoint address|Mandatory param (or header)|Controller method|Description
 ---|---|---|---|---
 GET|//host/api/v1/resource| |`index()`|Get a collection of resource
 GET|//host/api/v1/resource/{id}| |`show()`|Get the specified resource
 POST|//host/api/v1/resource| |`store()`|Create new resource
-POST|//host/api/v1/resource/{id}|`_method=put`|`update()`|Update the specified resource
-POST|//host/api/v1/resource/{id}|`_method=delete`|`delete()`|Delete the specified resource
+POST|//host/api/v1/resource/{id}|`_method=put` `(x-http-method-override: put)`|`update()`|Update the specified resource
+POST|//host/api/v1/resource/{id}|`_method=delete` `(x-http-method-override: delete)`|`delete()`|Delete the specified resource
 
 ---
 
