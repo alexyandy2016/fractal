@@ -10,7 +10,7 @@ class Request extends FormRequest {
      * {@inheritdoc}
      */
     public function response(array $errors) {
-        if ($this->ajax() || $this->wantsJson()) {
+        if ($this->is('api/*')) {
             return $this->respondUnprocessableError($errors);
         }
 

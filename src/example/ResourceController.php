@@ -58,7 +58,7 @@ class ResourceController extends Controller {
         }
 
         // respond created item with 201 status code
-        return $this->setStatusCode(201)->respondItem(
+        return $this->setResponseCode(201)->respondItem(
             $resource,
             new ResourceTransformer
         );

@@ -254,7 +254,7 @@ public function render($request, Exception $e) {
     }
 
     if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException) {
-        return $this->setStatusCode(400)->respondWithError('Invalid Credentials');
+        return $this->setResponseCode(400)->respondWithError('Invalid Credentials');
     }
 
     return parent::render($request, $e);
