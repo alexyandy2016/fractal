@@ -1,11 +1,11 @@
 #Fractal wrapper for Laravel 5#
-This is a package, or rather, an **opinionated/laravel-istic use case of the famous [league/fractal](https://github.com/thephpleague/fractal) package in Laravel 5 environment**.
+This is a package, or rather, an **opinionated/laravel-istic use case of the famous [league/fractal](https://github.com/thephpleague/fractal) package in Laravel 5.0/5.1 environment**.
 
 This project was started to fulfill a personal RESTful API service needs. In an initial attempt to evaluate various php API packages for Laravel, I found that the features of those packages providing are well excessive for my requirement.
 
 If your requirement is simple like mine, this is the right package. But if you need more delicate package, head over to [chiraggude/awesome-laravel](https://github.com/chiraggude/awesome-laravel#restful-apis) to find a right one.
 
-Using this package, I didn't want to sacrifice Laravel 5's recommended coding practices which I learned from the official documentation. And I wanted users of this project to be able to easily/freely handle/modify this package with the common knowledge/experience of Laravel 5, without having to require a package specific syntax/usage. And most importantly, I wanted he/she could build his/her API service quickly based on the examples provided.
+Using this package, I didn't want to sacrifice Laravel 5's recommended coding practices which I learned from the field. And I wanted users of this project to be able to easily/freely handle/modify this package with the common knowledge/experience of Laravel 5, without having to require a package specific syntax/usage. And most importantly, I wanted he/she could build his/her API service quickly based on the examples provided.
 
 ---
 
@@ -29,13 +29,13 @@ Using this package, I didn't want to sacrifice Laravel 5's recommended coding pr
 ##Goal
 - Provides easy access to Fractal instance for Laravel 5 (ServiceProvider).
 - Provides configuration capability for Fractal and response format.
-- Provides use case example, so that users can quickly copy & paste to his/her project.
+- Provides use case examples, so that users can quickly copy & paste to his/her project.
 
 <a name="install"></a>
 ##Install
 This package is provided as a composer package. Define `"appkr/fractal": "0.1.*"` at your project `composer.json`'s require section and `composer update`.
 
-Or require it at a console.
+Or require it directly at a console.
 
 ```
 composer require "appkr/fractal:0.1.*"
@@ -73,11 +73,12 @@ The package is bundled with some simple example. Example classes are namespaced 
 - routes definition, Eloquent Model and corresponding Controller
 - FormRequest
 - Transformer
+- Integration Test
 
-If you want to see the the working example right away, head over to `vendor/appkr/fractal/src/ApiServiceProfider.php`, uncomment the lines, republish assets, and migrate/seed tables.
+If you want to see the the working example right away, head over to `vendor/appkr/fractal/src/ApiServiceProvider.php`, uncomment the lines, republish assets, and migrate/seed tables.
 
 ```
-// Uncomment 2 lines at vendor/appkr/fractal/src/ApiServiceProfider.php
+// Uncomment 2 lines at vendor/appkr/fractal/src/ApiServiceProvider.php
 realpath(__DIR__ . '/../database/migrations/') => database_path('migrations')
 include __DIR__.'/./example/routes.php';
 
@@ -130,14 +131,15 @@ php artisan serve
 ```
 
 Or run `phpunit`, if your project is based on Laravel 5.1.*.
+
 ```
 phpunit vendor/appkr/fractal/src/example/ResourceApiTest.php
 ```
 
->**Note** If you finished evaluating the example, don't forget to rollback the migration and comment at `vendor/appkr/fractal/src/ApiServiceProfider.php`
+>**Note** If you finished evaluating the example, don't forget to rollback the migration and re-comment at `vendor/appkr/fractal/src/ApiServiceProvider.php`
 >
 >```
->// Comment 2 lines at vendor/appkr/fractal/src/ApiServiceProfider.php
+>// Comment 2 lines at vendor/appkr/fractal/src/ApiServiceProvider.php
 >// realpath(__DIR__ . '/../database/migrations/') => database_path('migrations')
 >// include __DIR__.'/./example/routes.php';
 >
@@ -229,7 +231,17 @@ This package follows original Fractal Transformer spec. Refer to the original [d
 ###Work around for TokenMismatchException
 Laravel 5 throws TokenMismatchException when an client sends a post request(create, update, or delete resource) to the API endpoint. Because the clients exists separate domain or environment (e.g. android native application), no way for your server to publish csrf token to the client. It's more desirable to achieve a level of security through [tymondesigns/jwt-auth](https://github.com/tymondesigns/jwt-auth) or equivalent measures.
 
-So, in my small project, I did it like this:
+If your project depends on Laravel 5.1, it's never easier:
+
+```
+// app/Http/Middleware/VerifyCsrfToken.php
+
+protected $except = [
+    'api/*'
+];
+```
+
+In Laravel 5.0, I did it like this:
 
 ```
 // app/Http/Middleware/VerifyCsrfToken.php
