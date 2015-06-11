@@ -295,4 +295,6 @@ POST|//host/api/v1/resource/{id}|`_method=delete` `(x-http-method-override: dele
 
 ---
 
+##LICENSE
+
 [The MIT License](https://raw.githubusercontent.com/appkr/fractal/master/LICENSE)

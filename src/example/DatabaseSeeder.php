@@ -30,7 +30,10 @@ class DatabaseSeeder extends Seeder {
 
         // Seeding resources table
         Resource::truncate();
-        $manager_ids = Manager::lists('id');
+
+        $manager_ids = ($this->isL51())
+            ? Manager::lists('id')->toArray()
+            : ManAger::lists('id');
 
         foreach (range(1, 100) as $index) {
             Resource::create([
@@ -43,6 +46,10 @@ class DatabaseSeeder extends Seeder {
 
         $this->command->info('resources table - example data seeded.');
 
+    }
+
+    private function isL51() {
+        return str_contains(app()->version(), '5.1');
     }
 
 }
