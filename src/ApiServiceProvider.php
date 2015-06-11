@@ -17,7 +17,8 @@ class ApiServiceProvider extends ServiceProvider
     {
         $this->publishes([
             realpath(__DIR__ . '/../config/fractal.php') => config_path('fractal.php'),
-            //realpath(__DIR__ . '/../database/migrations/') => database_path('migrations')
+            //realpath(__DIR__ . '/../database/migrations/') => database_path('migrations'),
+            //realpath(__DIR__ . '/../database/factories/') => database_path('factories')
         ]);
 
         $this->mergeConfigFrom(

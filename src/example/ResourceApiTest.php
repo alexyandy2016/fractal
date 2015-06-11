@@ -34,7 +34,7 @@ class ResourceApiTest extends \TestCase
      *
      * @var string
      */
-    protected $jwtToken = 'some_random_string';
+    protected $jwtToken = 'header.payload.signature';
 
     /** @before */
     public function stub()

@@ -1,4 +1,9 @@
 #Fractal wrapper for Laravel 5#
+
+[![Latest Version](https://img.shields.io/github/release/appkr/fractal.svg?style=flat-square)](https://github.com/appkr/fractal/releases)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](https://raw.githubusercontent.com/appkr/fractal/master/LICENSE)
+[![Total Downloads](https://img.shields.io/packagist/dt/appkr/fractal.svg?style=flat-square)](https://packagist.org/packages/appkr/fractal)
+
 This is a package, or rather, an **opinionated/laravel-istic use case of the famous [league/fractal](https://github.com/thephpleague/fractal) package in Laravel 5.0/5.1 environment**.
 
 This project was started to fulfill a personal RESTful API service needs. In an initial attempt to evaluate various php API packages for Laravel, I found that the features of those packages providing are well excessive for my requirement.
@@ -78,8 +83,9 @@ The package is bundled with some simple example. Example classes are namespaced 
 If you want to see the the working example right away, head over to `vendor/appkr/fractal/src/ApiServiceProvider.php`, uncomment the lines, republish assets, and migrate/seed tables.
 
 ```
-// Uncomment 2 lines at vendor/appkr/fractal/src/ApiServiceProvider.php
+// Uncomment 3 lines at vendor/appkr/fractal/src/ApiServiceProvider.php
 realpath(__DIR__ . '/../database/migrations/') => database_path('migrations')
+realpath(__DIR__ . '/../database/factories/') => database_path('factories')
 include __DIR__.'/./example/routes.php';
 
 // Republish assets at a console
@@ -92,7 +98,7 @@ php artisan db:seed --class="Appkr\Fractal\Example\DatabaseSeeder"
 
 Boot up the server and head over to `http://localhost:8000/api/v1/resource`.
 ```
-// Boot up you local dev server
+// Boot up your local dev server
 php artisan serve
 
 // head over to http://localhost:8000/api/v1/resource at a browser, you sould see:
@@ -141,6 +147,7 @@ phpunit vendor/appkr/fractal/src/example/ResourceApiTest.php
 >```
 >// Comment 2 lines at vendor/appkr/fractal/src/ApiServiceProvider.php
 >// realpath(__DIR__ . '/../database/migrations/') => database_path('migrations')
+>// realpath(__DIR__ . '/../database/factories/') => database_path('factories')
 >// include __DIR__.'/./example/routes.php';
 >
 >// Rollback migrations
@@ -172,22 +179,10 @@ Route::group(['prefix' => 'api/v1'], function() {
 
 <a name="controller"></a>
 ###Controller
-It is recommended to extend `Appkr\Fractal\Controller` instead of `App\Http\Controllers\Controller`. By extending the abstract controller of this package, YourController (in this example `ResourceController`) can access to `Appkr\Fractal\ApiHelper` trait's various helper methods.
+It is recommended for `YourController` to extend `Appkr\Fractal\Controller`. By extending the abstract controller of this package, `YourController` (in this example `ResourceController`) can access to various helper methods of `Appkr\Fractal\ApiHelper` trait.
 
 ```
 class ResourceController extends Appkr\Fractal\Controller {}
-```
-
-Or, if many logics are already living in your abstract controller, you can set use statement of `Appkr\Fractal\ApiHelper` at yours.
-
-```
-// app/Http/Controllers/Controller.php
-
-abstract class Controller extends BaseController {
-    ...
-    use Appkr\Fractal\ApiHelper;
-    ...
-}
 ```
 
 >**Note** Open `Appkr\Fractal\ApiHelper` and check what methods are available there. For example, you can respond a transformed item at the `show()`, or simple json at the `destroy()` method like below:
@@ -215,13 +210,11 @@ abstract class Controller extends BaseController {
 
 <a name="form-request"></a>
 ###FormRequest
-It is recommended to extend `Appkr\Fractal\Request` instead of `App\Http\Requests\Request`. By extending the abstract request of this package, validation or authorization errors are properly formatted as you configured at the `config\fractal.php`.
+It is recommended for `YourFormRequest` to extend `Appkr\Fractal\Request`. By extending the abstract request of this package, validation or authorization errors are properly formatted just like you configured at the `config/fractal.php`.
 
 ```
 class ResourceRequest extends Appkr\Fractal\Request {}
 ```
-
-Or, you may copy code from `Appkr\Fractal\Request` and paste to your abstract request.
 
 <a name="transformer"></a>
 ###Transformer
@@ -229,9 +222,9 @@ This package follows original Fractal Transformer spec. Refer to the original [d
 
 <a name="csrf"></a>
 ###Work around for TokenMismatchException
-Laravel 5 throws TokenMismatchException when an client sends a post request(create, update, or delete resource) to the API endpoint. Because the clients exists separate domain or environment (e.g. android native application), no way for your server to publish csrf token to the client. It's more desirable to achieve a level of security through [tymondesigns/jwt-auth](https://github.com/tymondesigns/jwt-auth) or equivalent measures.
+Laravel 5 throws TokenMismatchException when an client sends a post request(create, update, or delete resource) to the API endpoint. Because the clients exists separate domain or environment (e.g. android native application), no way for your server to publish csrf token to the client. It's more desirable to achieve a level of security through [tymondesigns/jwt-auth](https://github.com/tymondesigns/jwt-auth) or equivalent measures. ([Recommended article on API security](https://scotch.io/tutorials/the-ins-and-outs-of-token-based-authentication))
 
-If your project depends on Laravel 5.1, it's never easier:
+If your project depends on Laravel 5.1.*, it's never easier:
 
 ```
 // app/Http/Middleware/VerifyCsrfToken.php
@@ -241,14 +234,14 @@ protected $except = [
 ];
 ```
 
-In Laravel 5.0, I did it like this:
+In Laravel 5.0.*, I did it like this:
 
 ```
 // app/Http/Middleware/VerifyCsrfToken.php
 
 public function handle($request, Closure $next) {
     if ($request->is('api/*')) {
-        return $this->addCookieToResponse($request, $next($request));
+        return $next($request);
     }
 
     return parent::handle($request, $next);
@@ -257,7 +250,7 @@ public function handle($request, Closure $next) {
 
 <a name="exception-formatting"></a>
 ###Formatting Laravel's General Exceptions.
-In case of `Illuminate\Database\Eloquent\ModelNotFoundException`, if the request was originated from API clients, I thought 404 with json response was more appropriate though, Laravel just rendered 404 with html response. To properly format this, I did:
+For example, I thought 404 with json response was more appropriate for `Illuminate\Database\Eloquent\ModelNotFoundException`, when the request was originated from API clients, but the current version of Laravel just rendered 404 with html response. To properly format this, I did:
 
 ```
 // app/Exceptions/Handlers.php
@@ -271,9 +264,10 @@ public function render($request, Exception $e) {
             return $this->respondNotFound('The resource you requested does not exist.');
         }
     
-        if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException) {
-            return $this->setResponseCode(400)->respondWithError('Invalid Credentials');
-        }
+        // Do yours! You get the idea, don't you?
+        // if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException) {
+        //     return $this->setResponseCode(400)->respondWithError('Invalid Credentials');
+        // }
     }
 
     return parent::render($request, $e);
