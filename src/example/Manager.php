@@ -1,8 +1,11 @@
-<?php namespace Appkr\Fractal\Example;
+<?php
+
+namespace Appkr\Fractal\Example;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Manager extends Model {
+class Manager extends Model
+{
 
     /**
      * The database table used by the model.
@@ -23,7 +26,8 @@ class Manager extends Model {
 
     # Relationships
 
-    public function resources() {
+    public function resources()
+    {
         return $this->hasMany(Resource::class);
     }
 

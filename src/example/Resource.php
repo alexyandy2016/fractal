@@ -1,8 +1,11 @@
-<?php namespace Appkr\Fractal\Example;
+<?php
+
+namespace Appkr\Fractal\Example;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Resource extends Model {
+class Resource extends Model
+{
 
     /**
      * The database table used by the model.
@@ -25,7 +28,8 @@ class Resource extends Model {
 
     # Relationships
 
-    public function manager() {
+    public function manager()
+    {
         return $this->belongsTo(Manager::class);
     }
 

@@ -1,19 +1,24 @@
-<?php namespace Appkr\Fractal;
+<?php
+
+namespace Appkr\Fractal;
 
 use Illuminate\Support\ServiceProvider;
 use League\Fractal\Manager as Fractal;
 
-class ApiServiceProvider extends ServiceProvider {
+class ApiServiceProvider extends ServiceProvider
+{
 
     /**
      * Boot the service provider.
      *
      * @return void
      */
-    public function boot() {
+    public function boot()
+    {
         $this->publishes([
-            realpath(__DIR__ . '/../config/fractal.php')   => config_path('fractal.php'),
-            //realpath(__DIR__ . '/../database/migrations/') => database_path('migrations')
+            realpath(__DIR__ . '/../config/fractal.php') => config_path('fractal.php'),
+            //realpath(__DIR__ . '/../database/migrations/') => database_path('migrations'),
+            //realpath(__DIR__ . '/../database/factories/') => database_path('factories')
         ]);
 
         $this->mergeConfigFrom(
@@ -29,13 +34,16 @@ class ApiServiceProvider extends ServiceProvider {
      *
      * @return void
      */
-    public function register() {
+    public function register()
+    {
         $this->app->singleton(Fractal::class, function ($app) {
             $manager = new Fractal;
             $manager->setSerializer(app($app['config']['fractal']['serializer']));
 
             return $manager;
         });
+
+        $this->app->bind('api.response', Response::class);
     }
 
 }

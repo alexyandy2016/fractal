@@ -1,13 +1,10 @@
-<?php namespace Appkr\Fractal;
+<?php
 
-use Illuminate\Foundation\Bus\DispatchesCommands;
+namespace Appkr\Fractal;
+
 use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Foundation\Validation\ValidatesRequests;
 
-abstract class Controller extends BaseController {
-
-    use DispatchesCommands;
-    use ValidatesRequests;
+abstract class Controller extends BaseController
+{
     use ApiHelper;
-
 }
