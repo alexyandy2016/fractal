@@ -5,7 +5,8 @@ namespace Appkr\Fractal\Example;
 use League\Fractal;
 use League\Fractal\TransformerAbstract;
 
-class ResourceTransformer extends TransformerAbstract {
+class ResourceTransformer extends TransformerAbstract
+{
 
     /**
      * List of resources possible to include
@@ -29,9 +30,11 @@ class ResourceTransformer extends TransformerAbstract {
      * Transform single resource
      *
      * @param Resource $resource
+     *
      * @return array
      */
-    public function transform(Resource $resource) {
+    public function transform(Resource $resource)
+    {
         return [
             'id'          => (int) $resource->id,
             'title'       => $resource->title,
@@ -45,10 +48,16 @@ class ResourceTransformer extends TransformerAbstract {
      * Include User
      *
      * @param Resource $resource
+     *
      * @return
      */
-    public function includeManager(Resource $resource) {
-        return $this->item($resource->manager, new ManagerTransformer);
+    public function includeManager(Resource $resource)
+    {
+        $manager = $resource->manager;
+
+        return $manager
+            ? $this->item($manager, new ManagerTransformer)
+            : null;
     }
 
 }

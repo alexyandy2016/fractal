@@ -4,7 +4,8 @@ namespace Appkr\Fractal\Example;
 
 use Appkr\Fractal\Controller;
 
-class ResourceController extends Controller {
+class ResourceController extends Controller
+{
 
     /**
      * @var Resource
@@ -14,7 +15,8 @@ class ResourceController extends Controller {
     /**
      * @param Resource $model
      */
-    public function __construct(Resource $model) {
+    public function __construct(Resource $model)
+    {
         // Uncomment if tymondesigns/jwt-auth is installed
         //$this->middleware('jwt.auth');
         //$this->middleware('jwt.refresh');
@@ -27,11 +29,16 @@ class ResourceController extends Controller {
      *
      * @return Response
      */
-    public function index() {
+    public function index()
+    {
         // Respond with pagination
         return $this->respondWithPagination(
             $this->model->with('manager')->latest()->paginate(25),
-            new ResourceTransformer
+            new ResourceTransformer,
+            // additional meta data to append
+            // the same 3rd argument applies to
+            // respondCollection(),respondItem()
+            ['foo' => 'bar']
         );
 
         // Respond as a collection
@@ -45,9 +52,11 @@ class ResourceController extends Controller {
      * Store a newly created resource in storage.
      *
      * @param ResourceRequest $request
+     *
      * @return Response
      */
-    public function store(ResourceRequest $request) {
+    public function store(ResourceRequest $request)
+    {
         // Merging manager_id. In real project
         // we should use $request->user()->id instead.
         $data = array_merge(
@@ -62,7 +71,9 @@ class ResourceController extends Controller {
         // respond created item with 201 status code
         return $this->setResponseCode(201)->respondItem(
             $resource,
-            new ResourceTransformer
+            new ResourceTransformer,
+            [], // additional meta data to append. Should be an array
+            ['additionalHttpResponseHeader' => 'value'] // additional headers
         );
 
         // respond with simple message
@@ -73,9 +84,11 @@ class ResourceController extends Controller {
      * Display the specified resource.
      *
      * @param  int $id
+     *
      * @return Response
      */
-    public function show($id) {
+    public function show($id)
+    {
         return $this->respondItem(
             $this->model->findOrFail($id),
             new ResourceTransformer
@@ -87,9 +100,11 @@ class ResourceController extends Controller {
      *
      * @param ResourceRequest $request
      * @param  int            $id
+     *
      * @return Response
      */
-    public function update(ResourceRequest $request, $id) {
+    public function update(ResourceRequest $request, $id)
+    {
         $resource = $this->model->findOrFail($id);
 
         if (! $resource->update($request->all())) {
@@ -104,9 +119,11 @@ class ResourceController extends Controller {
      *
      * @param ResourceRequest $request
      * @param  int            $id
+     *
      * @return Response
      */
-    public function destroy(ResourceRequest $request, $id) {
+    public function destroy(ResourceRequest $request, $id)
+    {
         $resource = $this->model->findOrFail($id);
 
         if (! $resource->delete()) {

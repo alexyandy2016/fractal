@@ -2,15 +2,11 @@
 
 namespace Appkr\Fractal;
 
-use Illuminate\Foundation\Bus\DispatchesCommands;
-use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Foundation\Validation\ValidatesRequests;
+use App\Http\Controllers\Controller as BaseController;
 
 abstract class Controller extends BaseController
 {
 
-    use DispatchesCommands;
-    use ValidatesRequests;
     use ApiHelper;
 
 }

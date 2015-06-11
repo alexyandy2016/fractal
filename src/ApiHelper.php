@@ -48,14 +48,16 @@ trait ApiHelper
      *
      * @param EloquentCollection $collection
      * @param                    $transformer
+     * @param array              $append
      * @param array              $headers
      *
      * @return \Illuminate\Contracts\Http\Response
      */
-    public function respondCollection(EloquentCollection $collection, $transformer = null, $headers = [])
+    public function respondCollection(EloquentCollection $collection, $transformer = null, $append = [], $headers = [])
     {
         $resource = new FractalCollection($collection, $this->getTransformer($transformer));
         $payload  = app(Fractal::class)->createData($resource)->toArray();
+        $resource->setMeta($append);
 
         return $this->setHeaders($headers)->respond($payload);
     }
@@ -65,14 +67,16 @@ trait ApiHelper
      *
      * @param EloquentModel $model
      * @param               $transformer
+     * @param array         $append
      * @param array         $headers
      *
      * @return \Illuminate\Contracts\Http\Response
      */
-    public function respondItem(EloquentModel $model, $transformer = null, $headers = [])
+    public function respondItem(EloquentModel $model, $transformer = null, $append = [], $headers = [])
     {
         $resource = new FractalItem($model, $this->getTransformer($transformer));
         $payload  = app(Fractal::class)->createData($resource)->toArray();
+        $resource->setMeta($append);
 
         return $this->setHeaders($headers)->respond($payload);
     }
@@ -82,16 +86,26 @@ trait ApiHelper
      *
      * @param LengthAwarePaginator $paginator
      * @param                      $transformer
+     * @param array                $append
      * @param array                $headers
      *
      * @return \Illuminate\Contracts\Http\Response
      */
-    public function respondWithPagination(LengthAwarePaginator $paginator, $transformer = null, $headers = [])
+    public function respondWithPagination(LengthAwarePaginator $paginator, $transformer = null, $append = [], $headers = [])
     {
+        // Append existing query parameter to pagination link
+        // Refer to http://fractal.thephpleague.com/pagination/#including-existing-query-string-values-in-pagination-links
+        $queryParams = array_diff_key($_GET, array_flip(['page']));
+
+        foreach($queryParams as $key => $value) {
+            $paginator->addQuery($key, $value);
+        }
+
         $collection = $paginator->getCollection();
 
         $resource = new FractalCollection($collection, $this->getTransformer($transformer));
         $resource->setPaginator(new IlluminatePaginatorAdapter($paginator));
+        $resource->setMeta($append);
 
         $payload = app(Fractal::class)->createData($resource)->toArray();
 
