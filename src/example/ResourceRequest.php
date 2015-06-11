@@ -1,8 +1,11 @@
-<?php namespace Appkr\Fractal\Example;
+<?php
+
+namespace Appkr\Fractal\Example;
 
 use Appkr\Fractal\Request;
 
-class ResourceRequest extends Request {
+class ResourceRequest extends Request
+{
 
     /**
      * @var array
@@ -17,7 +20,8 @@ class ResourceRequest extends Request {
      *
      * @return bool
      */
-    public function authorize() {
+    public function authorize()
+    {
         //if ($this->isUpdateRequest() or $this->isDeleteRequest()) {
         //    $id = $this->route('resource');
         //
@@ -33,7 +37,8 @@ class ResourceRequest extends Request {
      *
      * @return array
      */
-    public function rules() {
+    public function rules()
+    {
         $rules = $this->rules;
 
         if ($this->isUpdateRequest()) {

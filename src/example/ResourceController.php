@@ -1,4 +1,6 @@
-<?php namespace Appkr\Fractal\Example;
+<?php
+
+namespace Appkr\Fractal\Example;
 
 use Appkr\Fractal\Controller;
 

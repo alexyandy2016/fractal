@@ -1,4 +1,6 @@
-<?php namespace Appkr\Fractal\Example;
+<?php
+
+namespace Appkr\Fractal\Example;
 
 use League\Fractal;
 use League\Fractal\TransformerAbstract;

@@ -129,6 +129,11 @@ php artisan serve
 }
 ```
 
+Or run `phpunit`, if your project is based on Laravel 5.1.*.
+```
+phpunit vendor/appkr/fractal/src/example/ResourceApiTest.php
+```
+
 >**Note** If you finished evaluating the example, don't forget to rollback the migration and comment at `vendor/appkr/fractal/src/ApiServiceProfider.php`
 >
 >```

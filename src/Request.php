@@ -1,15 +1,19 @@
-<?php namespace Appkr\Fractal;
+<?php
+
+namespace Appkr\Fractal;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class Request extends FormRequest {
+class Request extends FormRequest
+{
 
     use ApiHelper;
 
     /**
      * {@inheritdoc}
      */
-    public function response(array $errors) {
+    public function response(array $errors)
+    {
         if ($this->is('api/*')) {
             return $this->respondUnprocessableError($errors);
         }
@@ -22,14 +26,16 @@ class Request extends FormRequest {
     /**
      * {@inheritdoc}
      */
-    public function forbiddenResponse() {
+    public function forbiddenResponse()
+    {
         return $this->respondUnauthorized();
     }
 
     /**
      * @return bool
      */
-    protected function isUpdateRequest() {
+    protected function isUpdateRequest()
+    {
         return in_array($this->input('_method'), ['put', 'patch', 'PUT', 'PATCH'])
         or in_array($this->header('x-http-method-override'), ['put', 'patch', 'PUT', 'PATCH']);
     }
@@ -37,7 +43,8 @@ class Request extends FormRequest {
     /**
      * @return bool
      */
-    protected function isDeleteRequest() {
+    protected function isDeleteRequest()
+    {
         return in_array($this->input('_method'), ['delete', 'DELETE'])
         or in_array($this->header('x-http-method-override'), ['delete', 'DELETE']);
     }

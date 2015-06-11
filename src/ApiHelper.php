@@ -1,4 +1,6 @@
-<?php namespace Appkr\Fractal;
+<?php
+
+namespace Appkr\Fractal;
 
 use League\Fractal\Manager as Fractal;
 use League\Fractal\Resource\Item as FractalItem;
@@ -8,7 +10,8 @@ use Illuminate\Database\Eloquent\Model as EloquentModel;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
-trait ApiHelper {
+trait ApiHelper
+{
 
     /**
      * Default http response code
@@ -28,9 +31,11 @@ trait ApiHelper {
      * Generic response
      *
      * @param mixed $payload
+     *
      * @return \Illuminate\Contracts\Http\Response
      */
-    public function respond($payload) {
+    public function respond($payload)
+    {
         return response()->json(
             $payload,
             $this->getResponseCode(),
@@ -44,11 +49,13 @@ trait ApiHelper {
      * @param EloquentCollection $collection
      * @param                    $transformer
      * @param array              $headers
+     *
      * @return \Illuminate\Contracts\Http\Response
      */
-    public function respondCollection(EloquentCollection $collection, $transformer = null, $headers = []) {
+    public function respondCollection(EloquentCollection $collection, $transformer = null, $headers = [])
+    {
         $resource = new FractalCollection($collection, $this->getTransformer($transformer));
-        $payload = app(Fractal::class)->createData($resource)->toArray();
+        $payload  = app(Fractal::class)->createData($resource)->toArray();
 
         return $this->setHeaders($headers)->respond($payload);
     }
@@ -59,11 +66,13 @@ trait ApiHelper {
      * @param EloquentModel $model
      * @param               $transformer
      * @param array         $headers
+     *
      * @return \Illuminate\Contracts\Http\Response
      */
-    public function respondItem(EloquentModel $model, $transformer = null, $headers = []) {
+    public function respondItem(EloquentModel $model, $transformer = null, $headers = [])
+    {
         $resource = new FractalItem($model, $this->getTransformer($transformer));
-        $payload = app(Fractal::class)->createData($resource)->toArray();
+        $payload  = app(Fractal::class)->createData($resource)->toArray();
 
         return $this->setHeaders($headers)->respond($payload);
     }
@@ -74,9 +83,11 @@ trait ApiHelper {
      * @param LengthAwarePaginator $paginator
      * @param                      $transformer
      * @param array                $headers
+     *
      * @return \Illuminate\Contracts\Http\Response
      */
-    public function respondWithPagination(LengthAwarePaginator $paginator, $transformer = null, $headers = []) {
+    public function respondWithPagination(LengthAwarePaginator $paginator, $transformer = null, $headers = [])
+    {
         $collection = $paginator->getCollection();
 
         $resource = new FractalCollection($collection, $this->getTransformer($transformer));
@@ -92,9 +103,11 @@ trait ApiHelper {
      *
      * @param       $message
      * @param array $headers
+     *
      * @return \Illuminate\Contracts\Http\Response
      */
-    public function respondSuccess($message, $headers = []) {
+    public function respondSuccess($message, $headers = [])
+    {
         $payload = $this->formatPayload($message, config('fractal.successFormat'));
 
         return $this->setHeaders($headers)->respond($payload);
@@ -105,9 +118,11 @@ trait ApiHelper {
      *
      * @param mixed $primitive
      * @param array $headers
+     *
      * @return $this
      */
-    public function respondCreated($primitive, $headers = []) {
+    public function respondCreated($primitive, $headers = [])
+    {
         $payload = null;
 
         if ($primitive instanceof EloquentModel) {
@@ -127,9 +142,11 @@ trait ApiHelper {
      * Respond 204
      *
      * @param array $headers
+     *
      * @return \Illuminate\Contracts\Http\Response
      */
-    public function respondNoContent($headers = []) {
+    public function respondNoContent($headers = [])
+    {
         return $this->setHeaders($headers)->setResponseCode(204)->respond(null);
     }
 
@@ -138,12 +155,14 @@ trait ApiHelper {
      *
      * @param mixed $message
      * @param array $headers
+     *
      * @return $this
      */
-    public function respondWithError($message = 'Unknown Error', $headers = []) {
+    public function respondWithError($message = 'Unknown Error', $headers = [])
+    {
         if ($message instanceof \Exception) {
             $this->responseCode = $this->translateExceptionCode($message);
-            $message = $message->getMessage();
+            $message            = $message->getMessage();
         }
 
         $payload = $this->formatPayload($message, config('fractal.errorFormat'));
@@ -156,9 +175,11 @@ trait ApiHelper {
      *
      * @param mixed $message
      * @param array $headers
+     *
      * @return \Illuminate\Contracts\Http\Response
      */
-    public function respondUnauthorized($message = 'Unauthorized', $headers = []) {
+    public function respondUnauthorized($message = 'Unauthorized', $headers = [])
+    {
         return $this->setHeaders($headers)->setResponseCode(401)->respondWithError($message);
     }
 
@@ -167,9 +188,11 @@ trait ApiHelper {
      *
      * @param mixed $message
      * @param array $headers
+     *
      * @return \Illuminate\Contracts\Http\Response
      */
-    public function respondForbidden($message = 'Forbidden', $headers = []) {
+    public function respondForbidden($message = 'Forbidden', $headers = [])
+    {
         return $this->setHeaders($headers)->setResponseCode(403)->respondWithError($message);
     }
 
@@ -178,9 +201,11 @@ trait ApiHelper {
      *
      * @param mixed $message
      * @param array $headers
+     *
      * @return \Illuminate\Contracts\Http\Response
      */
-    public function respondNotFound($message = 'Not Found', $headers = []) {
+    public function respondNotFound($message = 'Not Found', $headers = [])
+    {
         return $this->setHeaders($headers)->setResponseCode(404)->respondWithError($message);
     }
 
@@ -189,9 +214,11 @@ trait ApiHelper {
      *
      * @param mixed $message
      * @param array $headers
+     *
      * @return \Illuminate\Contracts\Http\Response
      */
-    public function respondNotAcceptable($message = 'Not Acceptable', $headers = []) {
+    public function respondNotAcceptable($message = 'Not Acceptable', $headers = [])
+    {
         return $this->setHeaders($headers)->setResponseCode(406)->respondWithError($message);
     }
 
@@ -200,9 +227,11 @@ trait ApiHelper {
      *
      * @param mixed $message
      * @param array $headers
+     *
      * @return \Illuminate\Contracts\Http\Response
      */
-    public function respondUnprocessableError($message = 'Unprocessable Entity', $headers = []) {
+    public function respondUnprocessableError($message = 'Unprocessable Entity', $headers = [])
+    {
         return $this->setHeaders($headers)->setResponseCode(422)->respondWithError($message);
     }
 
@@ -211,9 +240,11 @@ trait ApiHelper {
      *
      * @param mixed $message
      * @param array $headers
+     *
      * @return \Illuminate\Contracts\Http\Response
      */
-    public function respondInternalError($message = 'Internal Server Error', $headers = []) {
+    public function respondInternalError($message = 'Internal Server Error', $headers = [])
+    {
         return $this->setHeaders($headers)->setResponseCode(500)->respondWithError($message);
     }
 
@@ -222,7 +253,8 @@ trait ApiHelper {
      *
      * @return mixed
      */
-    public function getResponseCode() {
+    public function getResponseCode()
+    {
         return $this->responseCode;
     }
 
@@ -230,9 +262,11 @@ trait ApiHelper {
      * Setter for responseCode
      *
      * @param mixed $responseCode
+     *
      * @return $this
      */
-    public function setResponseCode($responseCode) {
+    public function setResponseCode($responseCode)
+    {
         $this->responseCode = $responseCode;
 
         return $this;
@@ -243,7 +277,8 @@ trait ApiHelper {
      *
      * @return array
      */
-    public function getHeaders() {
+    public function getHeaders()
+    {
         $defaultHeaders = config('fractal.defaultHeaders');
 
         return $defaultHeaders
@@ -255,9 +290,11 @@ trait ApiHelper {
      * Setter for headers
      *
      * @param array $headers
+     *
      * @return $this
      */
-    public function setHeaders(array $headers) {
+    public function setHeaders(array $headers)
+    {
         if ($headers) {
             $this->customHeaders = array_merge($this->customHeaders, $headers);
         }
@@ -270,9 +307,11 @@ trait ApiHelper {
      *
      * @param mixed $message
      * @param array $format
+     *
      * @return array
      */
-    public function formatPayload($message, array $format) {
+    public function formatPayload($message, array $format)
+    {
         $replace = [
             ':message' => $message,
             ':code'    => $this->getResponseCode()
@@ -292,9 +331,11 @@ trait ApiHelper {
      * if nothing/null is passed
      *
      * @param $transformer
+     *
      * @return \Illuminate\Foundation\Application|mixed
      */
-    private function getTransformer($transformer) {
+    private function getTransformer($transformer)
+    {
         return $transformer ?: app(SimpleArrayTransformer::class);
     }
 
@@ -302,9 +343,11 @@ trait ApiHelper {
      * Translate http status code based on
      *
      * @param $e
+     *
      * @return int
      */
-    private function translateExceptionCode($e) {
+    private function translateExceptionCode($e)
+    {
         if ($e->getCode() !== -1) {
             return $e->getCode();
         }
