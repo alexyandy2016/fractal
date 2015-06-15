@@ -1,4 +1,9 @@
 #Fractal wrapper for Laravel 5#
+
+[![Latest Version](https://img.shields.io/github/release/appkr/fractal.svg?style=flat-square)](https://github.com/appkr/fractal/releases)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](https://raw.githubusercontent.com/appkr/fractal/master/LICENSE)
+[![Total Downloads](https://img.shields.io/packagist/dt/appkr/fractal.svg?style=flat-square)](https://packagist.org/packages/appkr/fractal)
+
 This is a package, or rather, an **opinionated/laravel-istic use case of the famous [league/fractal](https://github.com/thephpleague/fractal) package in Laravel 5.0/5.1 environment**.
 
 This project was started to fulfill a personal RESTful API service needs. In an initial attempt to evaluate various php API packages for Laravel, I found that the features of those packages providing are well excessive for my requirement.
