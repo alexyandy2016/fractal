@@ -14,11 +14,6 @@ Using this package, I didn't want to sacrifice Laravel 5's recommended coding pr
 
 ---
 
-##Breaking Changes
-Now `Appkr\Fractal\Controller` extends `App\Http\Controllers\Controller`, `Appkr\Fractal\Request` extends `App\Http\Requests\Request`.
-
----
-
 ##Index
 
 - [Goal](#goal)

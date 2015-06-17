@@ -2,7 +2,7 @@
 
 namespace Appkr\Fractal;
 
-use App\Http\Controllers\Controller as BaseController;
+use Illuminate\Routing\Controller as BaseController;
 
 abstract class Controller extends BaseController
 {

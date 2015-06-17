@@ -2,9 +2,9 @@
 
 namespace Appkr\Fractal;
 
-use App\Http\Requests\Request as BaseRequest;
+use Illuminate\Foundation\Http\FormRequest;
 
-class Request extends BaseRequest
+class Request extends FormRequest
 {
 
     use ApiHelper;
