@@ -3,50 +3,69 @@
 namespace Appkr\Fractal;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
 
 class Request extends FormRequest
 {
-
     use ApiHelper;
 
+
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function response(array $errors)
+    protected function failedValidation(Validator $validator)
     {
-        if ($this->is('api/*')) {
-            return $this->respondUnprocessableError($errors);
+        if ($this->isApiRequest()) {
+            return $this->respondUnprocessableError($validator->errors()->getMessages());
         }
 
-        return $this->redirector->to($this->getRedirectUrl())
-            ->withInput($this->except($this->dontFlash))
-            ->withErrors($errors, $this->errorBag);
+        return parent::failedValidation($validator);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function forbiddenResponse()
+    protected function failedAuthorization()
     {
-        return $this->respondUnauthorized();
+        if ($this->isApiRequest()) {
+            return $this->respondUnauthorized();
+        }
+
+        return parent::failedAuthorization();
     }
 
     /**
+     * Determine if the request is update
+     *
      * @return bool
      */
     protected function isUpdateRequest()
     {
-        return in_array($this->input('_method'), ['put', 'patch', 'PUT', 'PATCH'])
-        or in_array($this->header('x-http-method-override'), ['put', 'patch', 'PUT', 'PATCH']);
+        $needle = ['put', 'PUT', 'patch', 'PATCH'];
+
+        return in_array($this->input('_method'), $needle)
+            or in_array($this->header('x-http-method-override'), $needle);
     }
 
     /**
+     * Determine if the request is delete
+     *
      * @return bool
      */
     protected function isDeleteRequest()
     {
-        return in_array($this->input('_method'), ['delete', 'DELETE'])
-        or in_array($this->header('x-http-method-override'), ['delete', 'DELETE']);
+        $needle = ['delete', 'DELETE'];
+
+        return in_array($this->input('_method'), $needle)
+            or in_array($this->header('x-http-method-override'), $needle);
     }
 
+    /**
+     * Determine if the current request belongs to api request
+     *
+     * @return bool
+     */
+    protected function isApiRequest() {
+        return $this->is('api/*');
+    }
 }

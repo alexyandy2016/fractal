@@ -194,7 +194,7 @@ trait ApiHelper
      */
     public function respondUnauthorized($message = 'Unauthorized', $headers = [])
     {
-        return $this->setHeaders($headers)->setResponseCode(401)->respondWithError($message);
+        return $this->setResponseCode(401)->respondWithError($message, $headers);
     }
 
     /**
@@ -207,7 +207,7 @@ trait ApiHelper
      */
     public function respondForbidden($message = 'Forbidden', $headers = [])
     {
-        return $this->setHeaders($headers)->setResponseCode(403)->respondWithError($message);
+        return $this->setResponseCode(403)->respondWithError($message, $headers);
     }
 
     /**
@@ -220,7 +220,7 @@ trait ApiHelper
      */
     public function respondNotFound($message = 'Not Found', $headers = [])
     {
-        return $this->setHeaders($headers)->setResponseCode(404)->respondWithError($message);
+        return $this->setResponseCode(404)->respondWithError($message, $headers);
     }
 
     /**
@@ -233,7 +233,7 @@ trait ApiHelper
      */
     public function respondNotAcceptable($message = 'Not Acceptable', $headers = [])
     {
-        return $this->setHeaders($headers)->setResponseCode(406)->respondWithError($message);
+        return $this->setResponseCode(406)->respondWithError($message, $headers);
     }
 
     /**
@@ -246,7 +246,7 @@ trait ApiHelper
      */
     public function respondUnprocessableError($message = 'Unprocessable Entity', $headers = [])
     {
-        return $this->setHeaders($headers)->setResponseCode(422)->respondWithError($message);
+        return $this->setResponseCode(422)->respondWithError($message, $headers);
     }
 
     /**
@@ -259,7 +259,7 @@ trait ApiHelper
      */
     public function respondInternalError($message = 'Internal Server Error', $headers = [])
     {
-        return $this->setHeaders($headers)->setResponseCode(500)->respondWithError($message);
+        return $this->setResponseCode(500)->respondWithError($message, headers);
     }
 
     /**
