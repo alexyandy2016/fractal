@@ -6,7 +6,6 @@ use Appkr\Fractal\Controller;
 
 class ResourceController extends Controller
 {
-
     /**
      * @var Resource
      */
@@ -32,17 +31,13 @@ class ResourceController extends Controller
     public function index()
     {
         // Respond with pagination
-        return $this->respondWithPagination(
+        return $this->setMeta(['foo' => 'bar'])->respondWithPagination(
             $this->model->with('manager')->latest()->paginate(25),
-            new ResourceTransformer,
-            // additional meta data to append
-            // the same 3rd argument applies to
-            // respondCollection(),respondItem()
-            ['foo' => 'bar']
+            new ResourceTransformer
         );
 
         // Respond as a collection
-        return $this->respondCollection(
+        return $this->setMeta(['foo' => 'bar'])->respondCollection(
             $this->model->with('manager')->latest()->get(),
             new ResourceTransformer
         );
@@ -72,7 +67,6 @@ class ResourceController extends Controller
         return $this->setResponseCode(201)->respondItem(
             $resource,
             new ResourceTransformer,
-            [], // additional meta data to append. Should be an array
             ['additionalHttpResponseHeader' => 'value'] // additional headers
         );
 
@@ -89,7 +83,7 @@ class ResourceController extends Controller
      */
     public function show($id)
     {
-        return $this->respondItem(
+        return $this->setMeta(['foo' => 'bar'])->respondItem(
             $this->model->findOrFail($id),
             new ResourceTransformer
         );
@@ -132,5 +126,4 @@ class ResourceController extends Controller
 
         return $this->respondSuccess('Deleted');
     }
-
 }

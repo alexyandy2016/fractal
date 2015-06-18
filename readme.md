@@ -12,6 +12,24 @@ If your requirement is simple like mine, this is the right package. But if you n
 
 Using this package, I didn't want to sacrifice Laravel 5's recommended coding practices which I learned from the field. And I wanted users of this project to be able to easily/freely handle/modify this package with the common knowledge/experience of Laravel 5, without having to require a package specific syntax/usage. And most importantly, I wanted he/she could build his/her API service quickly based on the examples provided.
 
+## Usage
+```php
+// Respond json formatted 'Resource' model with 'Manager' eagerload, pagination, and additional meta
+return $this->setMeta(['foo' => 'bar'])->respondWithPagination(
+    Resource::with('manager')->latest()->paginate(25),
+    new ResourceTransformer
+);
+
+// Respond json formatted response with predefined 'code', 'message', and additional meta of 'user' and 'token'
+return $this->setMeta([
+    'user'  => $this->createItemPayload($user, new UserTransformer),
+    'token' => JWTAuth::fromUser($user)
+])->respondSuccess(sprintf("Welcome back %s. You are now logged in!", $user->name));
+
+// Respond simple json message with validation errors and 422 response code
+return $this->respondUnprocessableError($errors);
+```
+
 ---
 
 ##Index
@@ -42,13 +60,13 @@ This package is provided as a composer package. Define `"appkr/fractal": "0.1.*"
 
 Or require it directly at a console.
 
-```
+```bash
 composer require "appkr/fractal:0.1.*"
 ```
 
 Add the service provider at the providers array of your `config/app.php`.
 
-```
+```php
 'providers'=> [
     ...
     'Appkr\Fractal\ApiServiceProvider'
@@ -57,7 +75,7 @@ Add the service provider at the providers array of your `config/app.php`.
 
 Finally, issue a publish assets command at a console.
 
-```
+```bash
 php artisan vendor:publish --provider="Appkr\Fractal\ApiServiceProvider"
 ```
 
@@ -82,7 +100,7 @@ The package is bundled with some simple example. Example classes are namespaced 
 
 If you want to see the the working example right away, head over to `vendor/appkr/fractal/src/ApiServiceProvider.php`, uncomment the lines, republish assets, and migrate/seed tables.
 
-```
+```php
 // Uncomment 3 lines at vendor/appkr/fractal/src/ApiServiceProvider.php
 realpath(__DIR__ . '/../database/migrations/') => database_path('migrations')
 realpath(__DIR__ . '/../database/factories/') => database_path('factories')
@@ -97,10 +115,12 @@ php artisan db:seed --class="Appkr\Fractal\Example\DatabaseSeeder"
 ```
 
 Boot up the server and head over to `http://localhost:8000/api/v1/resource`.
-```
+```bash
 // Boot up your local dev server
 php artisan serve
+```
 
+```json
 // head over to http://localhost:8000/api/v1/resource at a browser, you sould see:
 {
     "data": [
@@ -138,18 +158,20 @@ php artisan serve
 
 Or run `phpunit`, if your project is based on Laravel 5.1.*.
 
-```
+```bash
 phpunit vendor/appkr/fractal/src/example/ResourceApiTest.php
 ```
 
 >**Note** If you finished evaluating the example, don't forget to rollback the migration and re-comment at `vendor/appkr/fractal/src/ApiServiceProvider.php`
 >
->```
+>```php
 >// Comment 2 lines at vendor/appkr/fractal/src/ApiServiceProvider.php
 >// realpath(__DIR__ . '/../database/migrations/') => database_path('migrations')
 >// realpath(__DIR__ . '/../database/factories/') => database_path('factories')
 >// include __DIR__.'/./example/routes.php';
+>```
 >
+>```bash
 >// Rollback migrations
 >php artisan migrate:rollback
 >```
@@ -165,7 +187,7 @@ Best/fast way to build your service is, I think, referring the bundled examples 
 ###Route (API Endpoints)
 You can define your routes just like laravel-istic way.
 
-```
+```php
 // app/Http/routes.php
 
 Route::group(['prefix' => 'api/v1'], function() {
@@ -181,13 +203,13 @@ Route::group(['prefix' => 'api/v1'], function() {
 ###Controller
 It is recommended for `YourController` to extend `Appkr\Fractal\Controller`. By extending the abstract controller of this package, `YourController` (in this example `ResourceController`) can access to various helper methods of `Appkr\Fractal\ApiHelper` trait.
 
-```
+```php
 class ResourceController extends Appkr\Fractal\Controller {}
 ```
 
 >**Note** Open `Appkr\Fractal\ApiHelper` and check what methods are available there. For example, you can respond a transformed item at the `show()`, or simple json at the `destroy()` method like below:
 >
->```
+>```php
 >// app/Http/Controllers/ResourceController.php
 >
 >public function show($id) {
@@ -212,7 +234,7 @@ class ResourceController extends Appkr\Fractal\Controller {}
 ###FormRequest
 It is recommended for `YourFormRequest` to extend `Appkr\Fractal\Request`. By extending the abstract request of this package, validation or authorization errors are properly formatted just like you configured at the `config/fractal.php`.
 
-```
+```php
 class ResourceRequest extends Appkr\Fractal\Request {}
 ```
 
@@ -226,7 +248,7 @@ Laravel 5 throws TokenMismatchException when an client sends a post request(crea
 
 If your project depends on Laravel 5.1.*, it's never easier:
 
-```
+```php
 // app/Http/Middleware/VerifyCsrfToken.php
 
 protected $except = [
@@ -236,7 +258,7 @@ protected $except = [
 
 In Laravel 5.0.*, I did it like this:
 
-```
+```php
 // app/Http/Middleware/VerifyCsrfToken.php
 
 public function handle($request, Closure $next) {
@@ -252,7 +274,7 @@ public function handle($request, Closure $next) {
 ###Formatting Laravel's General Exceptions.
 For example, I thought 404 with json response was more appropriate for `Illuminate\Database\Eloquent\ModelNotFoundException`, when the request was originated from API clients, but the current version of Laravel just rendered 404 with html response. To properly format this, I did:
 
-```
+```php
 // app/Exceptions/Handlers.php
 
 use Appkr\Fractal\ApiHelper;
@@ -266,7 +288,7 @@ public function render($request, Exception $e) {
     
         // Do yours! You get the idea, don't you?
         // if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException) {
-        //     return $this->setResponseCode(400)->respondWithError('Invalid Credentials');
+        //     return $this->setResponseCode(400)->respondWithError($e);
         // }
     }
 

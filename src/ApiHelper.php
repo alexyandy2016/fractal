@@ -12,7 +12,6 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 trait ApiHelper
 {
-
     /**
      * Default http response code
      *
@@ -28,6 +27,13 @@ trait ApiHelper
     protected $customHeaders = [];
 
     /**
+     * List of meta data to append
+     *
+     * @var array
+     */
+    protected $meta = [];
+
+    /**
      * Generic response
      *
      * @param mixed $payload
@@ -36,6 +42,13 @@ trait ApiHelper
      */
     public function respond($payload)
     {
+        if ($meta = $this->getMeta()) {
+            $payload = array_merge(
+                $payload,
+                ['meta' => $meta]
+            );
+        }
+
         return response()->json(
             $payload,
             $this->getResponseCode(),
@@ -48,18 +61,34 @@ trait ApiHelper
      *
      * @param EloquentCollection $collection
      * @param                    $transformer
-     * @param array              $append
      * @param array              $headers
      *
      * @return \Illuminate\Contracts\Http\Response
      */
-    public function respondCollection(EloquentCollection $collection, $transformer = null, $append = [], $headers = [])
+    public function respondCollection(EloquentCollection $collection, $transformer = null, $headers = [])
     {
-        $resource = new FractalCollection($collection, $this->getTransformer($transformer));
-        $payload  = app(Fractal::class)->createData($resource)->toArray();
-        $resource->setMeta($append);
+        $payload = $this->createCollectionPayload($collection, $transformer);
 
         return $this->setHeaders($headers)->respond($payload);
+    }
+
+    /**
+     * Create FractalCollection payload
+     *
+     * @param EloquentCollection $collection
+     * @param null               $transformer
+     *
+     * @return mixed
+     */
+    public function createCollectionPayload(EloquentCollection $collection, $transformer = null)
+    {
+        $resource = new FractalCollection($collection, $this->getTransformer($transformer));
+        if ($meta = $this->getMeta()){
+            $resource->setMeta($meta);
+            $this->setMeta([]);
+        }
+
+        return app(Fractal::class)->createData($resource)->toArray();
     }
 
     /**
@@ -67,18 +96,34 @@ trait ApiHelper
      *
      * @param EloquentModel $model
      * @param               $transformer
-     * @param array         $append
      * @param array         $headers
      *
      * @return \Illuminate\Contracts\Http\Response
      */
-    public function respondItem(EloquentModel $model, $transformer = null, $append = [], $headers = [])
+    public function respondItem(EloquentModel $model, $transformer = null, $headers = [])
     {
-        $resource = new FractalItem($model, $this->getTransformer($transformer));
-        $payload  = app(Fractal::class)->createData($resource)->toArray();
-        $resource->setMeta($append);
+        $payload = $this->createItemPayload($model, $transformer);
 
         return $this->setHeaders($headers)->respond($payload);
+    }
+
+    /**
+     * Create FractalItem payload
+     *
+     * @param EloquentModel $model
+     * @param null          $transformer
+     *
+     * @return mixed
+     */
+    public function createItemPayload(EloquentModel $model, $transformer = null)
+    {
+        $resource = new FractalItem($model, $this->getTransformer($transformer));
+        if ($meta = $this->getMeta()){
+            $resource->setMeta($meta);
+            $this->setMeta([]);
+        }
+
+        return app(Fractal::class)->createData($resource)->toArray();
     }
 
     /**
@@ -86,12 +131,26 @@ trait ApiHelper
      *
      * @param LengthAwarePaginator $paginator
      * @param                      $transformer
-     * @param array                $append
      * @param array                $headers
      *
      * @return \Illuminate\Contracts\Http\Response
      */
-    public function respondWithPagination(LengthAwarePaginator $paginator, $transformer = null, $append = [], $headers = [])
+    public function respondWithPagination(LengthAwarePaginator $paginator, $transformer = null, $headers = [])
+    {
+        $payload = $this->createPaginationPayload($paginator, $transformer);
+
+        return $this->setHeaders($headers)->respond($payload);
+    }
+
+    /**
+     * Create FractalCollection payload with pagination
+     *
+     * @param LengthAwarePaginator $paginator
+     * @param null                 $transformer
+     *
+     * @return mixed
+     */
+    public function createPaginationPayload(LengthAwarePaginator $paginator, $transformer = null)
     {
         // Append existing query parameter to pagination link
         // Refer to http://fractal.thephpleague.com/pagination/#including-existing-query-string-values-in-pagination-links
@@ -105,11 +164,12 @@ trait ApiHelper
 
         $resource = new FractalCollection($collection, $this->getTransformer($transformer));
         $resource->setPaginator(new IlluminatePaginatorAdapter($paginator));
-        $resource->setMeta($append);
+        if ($meta = $this->getMeta()){
+            $resource->setMeta($meta);
+            $this->setMeta([]);
+        }
 
-        $payload = app(Fractal::class)->createData($resource)->toArray();
-
-        return $this->setHeaders($headers)->respond($payload);
+        return app(Fractal::class)->createData($resource)->toArray();
     }
 
     /**
@@ -317,6 +377,30 @@ trait ApiHelper
     }
 
     /**
+     * Getter for meta property
+     *
+     * @return array
+     */
+    public function getMeta()
+    {
+        return $this->meta;
+    }
+
+    /**
+     * Setter for meta property
+     *
+     * @param $meta
+     *
+     * @return $this
+     */
+    public function setMeta($meta)
+    {
+        $this->meta = $meta;
+
+        return $this;
+    }
+
+    /**
      * Build response payload array based on configured format
      *
      * @param mixed $message
@@ -378,5 +462,4 @@ trait ApiHelper
 
         return 400;
     }
-
 }
