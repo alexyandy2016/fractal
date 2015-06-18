@@ -12,6 +12,24 @@ If your requirement is simple like mine, this is the right package. But if you n
 
 Using this package, I didn't want to sacrifice Laravel 5's recommended coding practices which I learned from the field. And I wanted users of this project to be able to easily/freely handle/modify this package with the common knowledge/experience of Laravel 5, without having to require a package specific syntax/usage. And most importantly, I wanted he/she could build his/her API service quickly based on the examples provided.
 
+## Usage
+```
+// Respond json formatted 'Resource' model with 'Manager' eagerload, pagination, and additional meta
+return $this->setMeta(['foo' => 'bar'])->respondWithPagination(
+    Resource::with('manager')->latest()->paginate(25),
+    new ResourceTransformer
+);
+
+// Respond json formatted response with predefined 'code', 'message', and additional meta of 'user' and 'token'
+return $this->setMeta([
+    'user'  => $this->createItemPayload($user, new UserTransformer),
+    'token' => JWTAuth::fromUser($user)
+])->respondSuccess(sprintf("Welcome back %s. You are now logged in!", $user->name));
+
+// Respond simple json message with validation errors and 422 response code
+return $this->respondUnprocessableError($errors);
+```
+
 ---
 
 ##Index
