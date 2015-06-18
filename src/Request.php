@@ -9,18 +9,31 @@ class Request extends FormRequest
 {
     use ApiHelper;
 
+    /**
+     * {@inheritDoc}
+     */
+    public function response(array $errors)
+    {
+        if ($this->isApiRequest()) {
+            return $this->respondUnprocessableError($errors);
+        }
+
+        return $this->redirector->to($this->getRedirectUrl())
+            ->withInput($this->except($this->dontFlash))
+            ->withErrors($errors, $this->errorBag);
+    }
 
     /**
      * {@inheritDoc}
      */
-    protected function failedValidation(Validator $validator)
-    {
-        if ($this->isApiRequest()) {
-            return $this->respondUnprocessableError($validator->errors()->getMessages());
-        }
-
-        return parent::failedValidation($validator);
-    }
+    //protected function failedValidation(Validator $validator)
+    //{
+    //    if ($this->isApiRequest()) {
+    //        return $this->respondUnprocessableError($validator->errors()->getMessages());
+    //    }
+    //
+    //    return parent::failedValidation($validator);
+    //}
 
     /**
      * {@inheritDoc}
