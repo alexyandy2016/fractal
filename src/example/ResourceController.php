@@ -31,13 +31,13 @@ class ResourceController extends Controller
     public function index()
     {
         // Respond with pagination
-        return $this->setMeta(['foo' => 'bar'])->respondWithPagination(
+        return $this->response()->setMeta(['foo' => 'bar'])->withPagination(
             $this->model->with('manager')->latest()->paginate(25),
             new ResourceTransformer
         );
 
         // Respond as a collection
-        return $this->setMeta(['foo' => 'bar'])->respondCollection(
+        return $this->response()->setMeta(['foo' => 'bar'])->withCollection(
             $this->model->with('manager')->latest()->get(),
             new ResourceTransformer
         );
@@ -60,18 +60,18 @@ class ResourceController extends Controller
         );
 
         if (! $resource = Resource::create($data)) {
-            return $this->respondInternalError('Failed to create !');
+            return $this->response()->internalError('Failed to create !');
         }
 
         // respond created item with 201 status code
-        return $this->setResponseCode(201)->respondItem(
+        return $this->response()->setStatusCode(201)->withItem(
             $resource,
             new ResourceTransformer,
             ['additionalHttpResponseHeader' => 'value'] // additional headers
         );
 
         // respond with simple message
-        return $this->respondCreated('Created');
+        return $this->response()->created('Created');
     }
 
     /**
@@ -83,7 +83,7 @@ class ResourceController extends Controller
      */
     public function show($id)
     {
-        return $this->setMeta(['foo' => 'bar'])->respondItem(
+        return $this->response()->setMeta(['foo' => 'bar'])->withItem(
             $this->model->findOrFail($id),
             new ResourceTransformer
         );
@@ -102,10 +102,10 @@ class ResourceController extends Controller
         $resource = $this->model->findOrFail($id);
 
         if (! $resource->update($request->all())) {
-            return $this->respondInternalError('Failed to update !');
+            return $this->response()->internalError('Failed to update !');
         }
 
-        return $this->respondSuccess('Updated');
+        return $this->response()->success('Updated');
     }
 
     /**
@@ -121,9 +121,9 @@ class ResourceController extends Controller
         $resource = $this->model->findOrFail($id);
 
         if (! $resource->delete()) {
-            return $this->respondInternalError('Failed to delete !');
+            return $this->response()->internalError('Failed to delete !');
         }
 
-        return $this->respondSuccess('Deleted');
+        return $this->response()->success('Deleted');
     }
 }

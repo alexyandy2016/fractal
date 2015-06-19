@@ -3,6 +3,17 @@
 return [
     /*
     |--------------------------------------------------------------------------
+    | API Endpoint pattern
+    |--------------------------------------------------------------------------
+    |
+    | This value will be used to bypass CSRF token check, to determine
+    | the current request is from an API client...
+    |
+    */
+    'pattern' => 'api/*',
+
+    /*
+    |--------------------------------------------------------------------------
     | Fractal Serializer
     |--------------------------------------------------------------------------
     |
@@ -10,7 +21,7 @@ return [
     | http://fractal.thephpleague.com/serializers/
     |
     */
-    'serializer' => env('FRACTAL_SERIALIZER', 'League\Fractal\Serializer\ArraySerializer'),
+    'serializer' => env('FRACTAL_SERIALIZER', \League\Fractal\Serializer\ArraySerializer::class),
 
     /*
     |--------------------------------------------------------------------------

@@ -42,6 +42,8 @@ class ApiServiceProvider extends ServiceProvider
 
             return $manager;
         });
+
+        $this->app->bind('api.response', Response::class);
     }
 
 }

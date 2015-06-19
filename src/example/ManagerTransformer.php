@@ -21,7 +21,7 @@ class ManagerTransformer extends TransformerAbstract
             'id'         => (int) $manager->id,
             'name'       => $manager->name,
             'email'      => $manager->email,
-            'created_at' => (string) $manager->created_at
+            'created_at' => (int) $manager->created_at->getTimestamp()
         ];
     }
 }

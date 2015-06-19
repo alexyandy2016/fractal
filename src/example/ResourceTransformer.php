@@ -40,7 +40,7 @@ class ResourceTransformer extends TransformerAbstract
             'title'       => $resource->title,
             'description' => $resource->description,
             'deprecated'  => (bool) ($resource->deprecated == 1) ? true : false,
-            'created_at'  => (string) $resource->created_at
+            'created_at'  => (int) $resource->created_at->getTimestamp()
         ];
     }
 

@@ -3,19 +3,16 @@
 namespace Appkr\Fractal;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Contracts\Validation\Validator;
 
 class Request extends FormRequest
 {
-    use ApiHelper;
-
     /**
      * {@inheritDoc}
      */
     public function response(array $errors)
     {
         if ($this->isApiRequest()) {
-            return $this->respondUnprocessableError($errors);
+            return app('api.response')->unprocessableError($errors);
         }
 
         return $this->redirector->to($this->getRedirectUrl())
@@ -26,22 +23,10 @@ class Request extends FormRequest
     /**
      * {@inheritDoc}
      */
-    //protected function failedValidation(Validator $validator)
-    //{
-    //    if ($this->isApiRequest()) {
-    //        return $this->respondUnprocessableError($validator->errors()->getMessages());
-    //    }
-    //
-    //    return parent::failedValidation($validator);
-    //}
-
-    /**
-     * {@inheritDoc}
-     */
     protected function failedAuthorization()
     {
         if ($this->isApiRequest()) {
-            return $this->respondUnauthorized();
+            return app('api.response')->unauthorizedError();
         }
 
         return parent::failedAuthorization();
@@ -79,6 +64,6 @@ class Request extends FormRequest
      * @return bool
      */
     protected function isApiRequest() {
-        return $this->is('api/*');
+        return $this->is(config('fractal.pattern'));
     }
 }
