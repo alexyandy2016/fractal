@@ -6,7 +6,6 @@ use Appkr\Fractal\Request;
 
 class ResourceRequest extends Request
 {
-
     /**
      * @var array
      */
