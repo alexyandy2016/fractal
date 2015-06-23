@@ -2,13 +2,12 @@
 
 namespace Appkr\Fractal;
 
-
-trait ApiHelper
+trait ApiResponse
 {
     /**
      * Get a Response instance
      *
-     * @return Response
+     * @return \Appkr\Fractal\Response
      */
     public function response()
     {
@@ -18,7 +17,7 @@ trait ApiHelper
     /**
      * Get a Response instance
      *
-     * @return Response
+     * @return \Appkr\Fractal\Response
      */
     public function respond()
     {

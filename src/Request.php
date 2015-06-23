@@ -11,7 +11,7 @@ class Request extends FormRequest
      */
     public function response(array $errors)
     {
-        if ($this->isApiRequest()) {
+        if (is_api_request()) {
             return app('api.response')->unprocessableError($errors);
         }
 
@@ -25,45 +25,10 @@ class Request extends FormRequest
      */
     protected function failedAuthorization()
     {
-        if ($this->isApiRequest()) {
+        if (is_api_request()) {
             return app('api.response')->unauthorizedError();
         }
 
         return parent::failedAuthorization();
-    }
-
-    /**
-     * Determine if the request is update
-     *
-     * @return bool
-     */
-    protected function isUpdateRequest()
-    {
-        $needle = ['put', 'PUT', 'patch', 'PATCH'];
-
-        return in_array($this->input('_method'), $needle)
-            or in_array($this->header('x-http-method-override'), $needle);
-    }
-
-    /**
-     * Determine if the request is delete
-     *
-     * @return bool
-     */
-    protected function isDeleteRequest()
-    {
-        $needle = ['delete', 'DELETE'];
-
-        return in_array($this->input('_method'), $needle)
-            or in_array($this->header('x-http-method-override'), $needle);
-    }
-
-    /**
-     * Determine if the current request belongs to api request
-     *
-     * @return bool
-     */
-    protected function isApiRequest() {
-        return $this->is(config('fractal.pattern'));
     }
 }

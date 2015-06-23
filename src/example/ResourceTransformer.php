@@ -7,7 +7,6 @@ use League\Fractal\TransformerAbstract;
 
 class ResourceTransformer extends TransformerAbstract
 {
-
     /**
      * List of resources possible to include
      *
@@ -29,8 +28,7 @@ class ResourceTransformer extends TransformerAbstract
     /**
      * Transform single resource
      *
-     * @param Resource $resource
-     *
+     * @param \Appkr\Fractal\Example\Resource $resource
      * @return array
      */
     public function transform(Resource $resource)
@@ -47,9 +45,8 @@ class ResourceTransformer extends TransformerAbstract
     /**
      * Include User
      *
-     * @param Resource $resource
-     *
-     * @return
+     * @param \Appkr\Fractal\Example\Resource $resource
+     * @return \League\Fractal\Resource\Item|null
      */
     public function includeManager(Resource $resource)
     {
@@ -59,5 +56,4 @@ class ResourceTransformer extends TransformerAbstract
             ? $this->item($manager, new ManagerTransformer)
             : null;
     }
-
 }

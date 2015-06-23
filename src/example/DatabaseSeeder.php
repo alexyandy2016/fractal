@@ -4,12 +4,10 @@ namespace Appkr\Fractal\Example;
 
 use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
-use Eloquent;
-use DB;
+use Illuminate\Database\Eloquent\Model as Eloquent;
 
 class DatabaseSeeder extends Seeder
 {
-
     /**
      * Run the database seeds.
      *
@@ -35,7 +33,7 @@ class DatabaseSeeder extends Seeder
         // Seeding resources table
         Resource::truncate();
 
-        $managerIds = ($this->isL51())
+        $managerIds = (is_51())
             ? Manager::lists('id')->toArray()
             : Manager::lists('id');
 
@@ -49,12 +47,5 @@ class DatabaseSeeder extends Seeder
         }
 
         $this->command->line("<info>Seeded:</info> resources table");
-
     }
-
-    private function isL51()
-    {
-        return str_contains(app()->version(), '5.1');
-    }
-
 }

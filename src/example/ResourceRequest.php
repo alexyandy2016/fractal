@@ -21,13 +21,6 @@ class ResourceRequest extends Request
      */
     public function authorize()
     {
-        //if ($this->isUpdateRequest() or $this->isDeleteRequest()) {
-        //    $id = $this->route('resource');
-        //
-        //    return Resource::where('id', $id)
-        //        ->where('manager_id', $this->manager()->id)->exists();
-        //}
-
         return true;
     }
 
@@ -40,15 +33,14 @@ class ResourceRequest extends Request
     {
         $rules = $this->rules;
 
-        if ($this->isUpdateRequest()) {
+        if (is_update_request()) {
             $rules['deprecated'] = 'boolean';
         }
 
-        if ($this->isDeleteRequest()) {
+        if (is_delete_request()) {
             $rules = [];
         }
 
         return $rules;
     }
-
 }

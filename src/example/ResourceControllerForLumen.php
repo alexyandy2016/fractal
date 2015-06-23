@@ -4,8 +4,9 @@ namespace Appkr\Fractal\Example;
 
 use App\Http\Controllers\Controller;
 use Appkr\Fractal\Response;
+use Illuminate\Http\Request;
 
-class ResourceController extends Controller
+class ResourceControllerForLumen extends Controller
 {
 
     /**
@@ -51,11 +52,16 @@ class ResourceController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param ResourceRequest $request
-     * @return \Illuminate\Contracts\Http\Response
+     * @param \Illuminate\Http\Request $request
+     * @return $this|\Illuminate\Contracts\Http\Response
      */
-    public function store(ResourceRequest $request)
+    public function store(Request $request)
     {
+        $this->validate($request, [
+            'title'       => 'required|min:2',
+            'description' => 'min:2'
+        ]);
+
         // Merging manager_id. In real project
         // we should use $request->user()->id instead.
         $data = array_merge(
@@ -94,12 +100,18 @@ class ResourceController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Appkr\Fractal\Example\ResourceRequest $request
-     * @param int                                    $id
+     * @param \Illuminate\Http\Request $request
+     * @param int                      $id
      * @return \Illuminate\Contracts\Http\Response
      */
-    public function update(ResourceRequest $request, $id)
+    public function update(Request $request, $id)
     {
+        $this->validate($request, [
+            'title'       => 'required|min:2',
+            'description' => 'min:2',
+            'deprecated'  => 'boolean'
+        ]);
+
         $resource = $this->model->findOrFail($id);
 
         if (! $resource->update($request->all())) {
@@ -112,11 +124,11 @@ class ResourceController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param ResourceRequest $request
-     * @param  int            $id
+     * @param \Illuminate\Http\Request $request
+     * @param  int                     $id
      * @return \Illuminate\Contracts\Http\Response
      */
-    public function destroy(ResourceRequest $request, $id)
+    public function destroy(Request $request, $id)
     {
         $resource = $this->model->findOrFail($id);
 
