@@ -38,6 +38,7 @@ return $this->response()->unprocessableError($errors);
     - [Handle TokenMismatchException](#token)
     - [Formatting Laravel's General Exceptions.](#exception-formatting)
     - [CORS in Javascript Client](#cors)
+- [Avaliable Response Methods](#api)
 - [Access API Endpoints from a Client](#client)
 
 ---
@@ -344,12 +345,12 @@ These are the list of methods that `Appkr\Fractal\Response` provides:
 ```php
 // Generic response. 
 // If valid callback parameter is provided, jsonp response is provided.
-// All other responses are depend upon this base response.
+// All other responses are depending upon this base response.
 respond(array $payload)
 
 // Respond collection of resources
 // If $transformer is not given as the second argument,
-// this class does its best to transform the payload to simple array
+// this class does its best to transform the payload to a simple array
 withCollection(
     Illuminate\Database\Eloquent\Collection $collection, 
     League\Fractal\TransformerAbstract|null $transformer, 
@@ -375,6 +376,8 @@ withPagination(
 success(string|array $message, array $headers)
 
 // Respond 201
+// If a model is given at the first argument of this method,
+// the class tries its best to transform the model to a simple array
 created(
     string|array|Illuminate\Database\Eloquent\Model $primitive, 
     array $headers
@@ -386,7 +389,7 @@ noContent(array $headers)
 // Generic error response
 // All other error response depends upon this method
 // If an instance of Exception of given as the first argument,
-// this class does its best to properly set status code
+// this class does its best to properly set message and status code
 error(
     string|array|Exception $message, 
     array $headers
@@ -411,12 +414,15 @@ unprocessableError(string|array $message, array $headers)
 internalError(string|array $message, array $headers)
 
 // Set http status code
+// This method is chainable
 setStatusCode(int $statusCode)
 
 // Set http response header
+// This method is chainable
 setHeaders(array $headers)
 
 // Set additional meta data
+// This method is chainable
 setMeta(array $meta)
 ```
 ---
