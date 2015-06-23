@@ -1,10 +1,10 @@
-<?php 
+<?php
 
 namespace Appkr\Fractal;
 
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
-use League\Fractal\Manager as Fractal;
+use League\Fractal\Manager;
 use League\Fractal\Resource\Item as FractalItem;
 use League\Fractal\Resource\Collection as FractalCollection;
 use League\Fractal\Pagination\IlluminatePaginatorAdapter;
@@ -12,17 +12,22 @@ use Illuminate\Database\Eloquent\Model as EloquentModel;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
-class Response 
+class Response
 {
+    /**
+     * @var Manager
+     */
+    protected $fractal;
+
     /**
      * @var Request
      */
-    private $request;
+    protected $request;
 
     /**
      * @var ResponseFactory
      */
-    private $response;
+    protected $response;
 
     /**
      * Http status code
@@ -39,6 +44,13 @@ class Response
     protected $headers = [];
 
     /**
+     * List of includes
+     *
+     * @var string
+     */
+    protected $includes;
+
+    /**
      * List of meta data to append to the response body
      *
      * @var array
@@ -48,12 +60,14 @@ class Response
     /**
      * Response.
      *
-     * @param Request         $request
+     * @param Manager $fractal
+     * @param Request $request
      * @param ResponseFactory $response
      */
-    public function __construct(Request $request, ResponseFactory $response)
+    public function __construct(Manager $fractal, Request $request, ResponseFactory $response)
     {
-        $this->request = $request;
+        $this->fractal  = $fractal;
+        $this->request  = $request;
         $this->response = $response;
     }
 
@@ -73,7 +87,7 @@ class Response
             );
         }
 
-        return (! $callback = $this->request->input('callback'))
+        return ( ! $callback = $this->request->input('callback'))
             ? $this->response->json(
                 $payload,
                 $this->getStatusCode(),
@@ -92,7 +106,7 @@ class Response
      *
      * @param EloquentCollection $collection
      * @param                    $transformer
-     * @param array              $headers
+     * @param array $headers
      *
      * @return \Illuminate\Contracts\Http\Response
      */
@@ -107,7 +121,7 @@ class Response
      * Create FractalCollection payload
      *
      * @param EloquentCollection $collection
-     * @param null               $transformer
+     * @param null $transformer
      *
      * @return mixed
      */
@@ -115,12 +129,17 @@ class Response
     {
         $resource = new FractalCollection($collection, $this->getTransformer($transformer));
 
-        if ($meta = $this->getMeta()){
+        if ($meta = $this->getMeta()) {
             $resource->setMeta($meta);
             $this->setMeta([]);
         }
 
-        return app(Fractal::class)->createData($resource)->toArray();
+        if ($includes = $this->getIncludes()) {
+            $this->fractal->parseIncludes($this->request->input('include'));
+            $this->setIncludes(null);
+        }
+
+        return $this->fractal->createData($resource)->toArray();
     }
 
     /**
@@ -128,7 +147,7 @@ class Response
      *
      * @param EloquentModel $model
      * @param               $transformer
-     * @param array         $headers
+     * @param array $headers
      *
      * @return \Illuminate\Contracts\Http\Response
      */
@@ -143,19 +162,25 @@ class Response
      * Create FractalItem payload
      *
      * @param EloquentModel $model
-     * @param null          $transformer
+     * @param null $transformer
      *
      * @return mixed
      */
     public function getItem(EloquentModel $model, $transformer = null)
     {
         $resource = new FractalItem($model, $this->getTransformer($transformer));
-        if ($meta = $this->getMeta()){
+
+        if ($meta = $this->getMeta()) {
             $resource->setMeta($meta);
             $this->setMeta([]);
         }
 
-        return app(Fractal::class)->createData($resource)->toArray();
+        if ($includes = $this->getIncludes()) {
+            $this->fractal->parseIncludes($this->request->input('include'));
+            $this->setIncludes(null);
+        }
+
+        return $this->fractal->createData($resource)->toArray();
     }
 
     /**
@@ -163,7 +188,7 @@ class Response
      *
      * @param LengthAwarePaginator $paginator
      * @param                      $transformer
-     * @param array                $headers
+     * @param array $headers
      *
      * @return \Illuminate\Contracts\Http\Response
      */
@@ -178,7 +203,7 @@ class Response
      * Create FractalCollection payload with pagination
      *
      * @param LengthAwarePaginator $paginator
-     * @param null                 $transformer
+     * @param null $transformer
      *
      * @return mixed
      */
@@ -188,7 +213,7 @@ class Response
         // Refer to http://fractal.thephpleague.com/pagination/#including-existing-query-string-values-in-pagination-links
         $queryParams = array_diff_key($_GET, array_flip(['page']));
 
-        foreach($queryParams as $key => $value) {
+        foreach ($queryParams as $key => $value) {
             $paginator->addQuery($key, $value);
         }
 
@@ -196,12 +221,18 @@ class Response
 
         $resource = new FractalCollection($collection, $this->getTransformer($transformer));
         $resource->setPaginator(new IlluminatePaginatorAdapter($paginator));
-        if ($meta = $this->getMeta()){
+
+        if ($meta = $this->getMeta()) {
             $resource->setMeta($meta);
             $this->setMeta([]);
         }
 
-        return app(Fractal::class)->createData($resource)->toArray();
+        if ($includes = $this->getIncludes()) {
+            $this->fractal->parseIncludes($this->request->input('include'));
+            $this->setIncludes(null);
+        }
+
+        return $this->fractal->createData($resource)->toArray();
     }
 
     /**
@@ -268,7 +299,7 @@ class Response
     {
         if ($message instanceof \Exception) {
             $this->statusCode = $this->translateExceptionCode($message);
-            $message            = $message->getMessage();
+            $message = $message->getMessage();
         }
 
         $payload = $this->formatPayload($message, config('fractal.errorFormat'));
@@ -409,6 +440,30 @@ class Response
     }
 
     /**
+     * Setter for includes property
+     * This is a wrapper for Fractal::parseInclude()
+     *
+     * @param array|string $includes Array or csv string of resources to include
+     * @return $this
+     */
+    public function setIncludes($includes)
+    {
+        $this->includes = $includes;
+
+        return $this;
+    }
+
+    /**
+     * Getter for includes property
+     *
+     * @return string
+     */
+    public function getIncludes()
+    {
+        return $this->includes;
+    }
+
+    /**
      * Getter for meta property
      *
      * @return array
@@ -444,7 +499,7 @@ class Response
     {
         $replace = [
             ':message' => $message,
-            ':code'    => $this->getStatusCode()
+            ':code' => $this->getStatusCode()
         ];
 
         array_walk_recursive($format, function (&$value, $key) use ($replace) {
@@ -478,7 +533,7 @@ class Response
      */
     private function translateExceptionCode($e)
     {
-        if (! in_array($e->getCode(), [0, -1, null, ''])) {
+        if ( ! in_array($e->getCode(), [0, -1, null, ''])) {
             return $e->getCode();
         }
 

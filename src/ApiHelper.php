@@ -2,7 +2,6 @@
 
 namespace Appkr\Fractal;
 
-
 trait ApiHelper
 {
     /**

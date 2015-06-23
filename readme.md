@@ -152,10 +152,25 @@ php artisan serve
 }
 ```
 
-Or run `phpunit`, if your project is based on Laravel 5.1.*.
+Assuming you've already set up a test environment, run `phpunit`, if your project is based on Laravel 5.1.*. 
 
 ```bash
 phpunit vendor/appkr/fractal/src/example/ResourceApiTest.php
+```
+
+Special care should be taken, the test should be done against the test database.
+
+```php
+// make database.sqlite file
+touch storage/database.sqlite
+
+// config/database.php
+'default' => app()->environment('testing')
+    ? 'sqlite'
+    : env('DB_CONNECTION', 'mysql'),
+
+// migrate
+php artisan migrate --env=testing
 ```
 
 >**Note** If you finished evaluating the example, don't forget to rollback the migration and re-comment at `vendor/appkr/fractal/src/ApiServiceProvider.php`
@@ -222,7 +237,7 @@ This package follows original Fractal Transformer spec. Refer to the original [d
 
 <a name="csrf"></a>
 ###Handle TokenMismatchException
-Laravel 5 throws `TokenMismatchException` when an client sends a post request(create, update, or delete resource) to the API endpoint. Because the clients exists separate domain or environment (e.g. android native application), no way for your server to publish csrf token to the client. It's more desirable to achieve a level of security through [tymondesigns/jwt-auth](https://github.com/tymondesigns/jwt-auth) or equivalent measures. ([Recommended article on API security](https://scotch.io/tutorials/the-ins-and-outs-of-token-based-authentication))
+Laravel 5 throws `TokenMismatchException` when an client sends a post request(create, update, or delete resource) to the API endpoint. Because the clients exists separate domain or environment (e.g. android native application), no way for your server to publish csrf token to the client. It's more desirable to achieve a level of security through [tymondesigns/jwt-auth](https://github.com/tymondesigns/jwt-auth) or equivalent measures. (Recommended articles: [scotch.io](https://scotch.io/tutorials/the-ins-and-outs-of-token-based-authentication), [angular-tips.com](http://angular-tips.com/blog/2014/05/json-web-tokens-introduction/))
 
 So, let's just skip it. 
 
