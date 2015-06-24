@@ -51,12 +51,12 @@ return $this->response()->unprocessableError($errors);
 
 <a name="install"></a>
 ##Install
-Use composer. Define `"appkr/fractal": "0.2.*"` at your project `composer.json`'s require section and `composer update`.
+Use composer. Define `"appkr/fractal": "0.3.*"` at your project `composer.json`'s require section and `composer update`.
 
 Or require it directly at a console.
 
 ```bash
-composer require "appkr/fractal:0.2.*"
+composer require "appkr/fractal:0.3.*"
 ```
 
 Add the service provider at the providers array of your `config/app.php`.

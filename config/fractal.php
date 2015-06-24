@@ -40,7 +40,7 @@ return [
     | Success Response Format
     |--------------------------------------------------------------------------
     |
-    | The format will be used at the ApiHelper to respond with success message.
+    | The format will be used at the ApiResponse to respond with success message.
     | respondNoContent(), respondSuccess(), respondCreated() consumes this format
     |
     */
@@ -56,7 +56,7 @@ return [
     | Error Response Format
     |--------------------------------------------------------------------------
     |
-    | The format will be used at the ApiHelper to respond with error message.
+    | The format will be used at the ApiResponse to respond with error message.
     | respondWithError(), respondForbidden()... consumes this format
     |
     */
