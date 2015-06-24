@@ -7,7 +7,6 @@ use League\Fractal\TransformerAbstract;
 
 class SimpleArrayTransformer extends TransformerAbstract
 {
-
     /**
      * Transform single resource
      *
@@ -19,5 +18,4 @@ class SimpleArrayTransformer extends TransformerAbstract
     {
         return $model->toArray();
     }
-
 }

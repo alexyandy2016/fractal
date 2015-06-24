@@ -4,7 +4,6 @@ namespace Appkr\Fractal\Example\Test;
 
 class ResourceApiTest extends \TestCase
 {
-
     /**
      * Api endpoint
      *
@@ -134,5 +133,4 @@ class ResourceApiTest extends \TestCase
     {
         return ['Authorization' => "Bearer $this->jwtToken"] + $append;
     }
-
 }

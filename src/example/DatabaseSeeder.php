@@ -9,7 +9,6 @@ use DB;
 
 class DatabaseSeeder extends Seeder
 {
-
     /**
      * Run the database seeds.
      *
@@ -52,9 +51,13 @@ class DatabaseSeeder extends Seeder
 
     }
 
+    /**
+     * Determine if the current version of Laravel framework is 5.1
+     *
+     * @return bool
+     */
     private function isL51()
     {
         return str_contains(app()->version(), '5.1');
     }
-
 }

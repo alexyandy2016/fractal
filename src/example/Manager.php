@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Manager extends Model
 {
-
     /**
      * The database table used by the model.
      *
@@ -30,5 +29,4 @@ class Manager extends Model
     {
         return $this->hasMany(Resource::class);
     }
-
 }
