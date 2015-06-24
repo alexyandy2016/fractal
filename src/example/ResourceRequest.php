@@ -50,5 +50,4 @@ class ResourceRequest extends Request
 
         return $rules;
     }
-
 }

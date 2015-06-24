@@ -7,7 +7,6 @@ use League\Fractal\Manager as Fractal;
 
 class ApiServiceProvider extends ServiceProvider
 {
-
     /**
      * Boot the service provider.
      *

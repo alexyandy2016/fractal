@@ -7,7 +7,6 @@ use League\Fractal\TransformerAbstract;
 
 class ManagerTransformer extends TransformerAbstract
 {
-
     /**
      * Transform single resource
      *

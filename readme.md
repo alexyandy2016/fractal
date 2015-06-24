@@ -216,7 +216,7 @@ Route::group(['prefix' => 'api/v1'], function() {
 
 <a name="controller"></a>
 ###Controller
-It is recommended for `YourController` or preferably `App\Http\Controllers\Controller` to import `Appkr\Fractal\ApiHelper`. By doing so, `YourController` can use `$this->response() or $this->respond()` as shown in the `ResourceController` example. 
+It is recommended for `YourController` or preferably `App\Http\Controllers\Controller` to import `Appkr\Fractal\ApiResponse`. By doing so, `YourController` can use `$this->response() or $this->respond()` as shown in the `ResourceController` example. 
 
 Alternatively you can inject `Appkr\Fractal\Response` to the constructor of `YourController`.
 
@@ -225,7 +225,7 @@ One lastly, you can get the `Appkr\Fractal\Response` instance from the Container
 ```php
 class YourController 
 {
-    use \Appkr\Fractal\ApiHelper;
+    use \Appkr\Fractal\ApiResponse;
     
     public function index() {
         // We can use $this->response() 
@@ -237,7 +237,7 @@ class YourController
 // Or inject Appkr\Fractal\Response
 class YourController 
 {
-    use \Appkr\Fractal\ApiHelper;
+    use \Appkr\Fractal\ApiResponse;
     
     protected $respond;
     

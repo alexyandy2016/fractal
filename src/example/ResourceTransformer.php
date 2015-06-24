@@ -7,7 +7,6 @@ use League\Fractal\TransformerAbstract;
 
 class ResourceTransformer extends TransformerAbstract
 {
-
     /**
      * List of resources possible to include
      *
@@ -59,5 +58,4 @@ class ResourceTransformer extends TransformerAbstract
             ? $this->item($manager, new ManagerTransformer)
             : null;
     }
-
 }

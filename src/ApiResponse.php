@@ -2,7 +2,7 @@
 
 namespace Appkr\Fractal;
 
-trait ApiHelper
+trait ApiResponse
 {
     /**
      * Get a Response instance
