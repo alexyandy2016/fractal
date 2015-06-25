@@ -2,24 +2,20 @@
 
 namespace Appkr\Fractal\Example\Test;
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
+
 class ResourceApiTest extends \TestCase
 {
-    /**
-     * Api endpoint
-     *
-     * @var string
-     */
-    protected $basePath = '/api/v1/resource';
+    use WithoutMiddleware;
+    use DatabaseTransactions;
 
     /**
-     * Overriding value for testing
+     * Stubbed Manager model
      *
-     * @var array
+     * @var \Appkr\Fractal\Example\Manager
      */
-    protected $overrides = [
-        'title'      => 'title',
-        'manager_id' => 1
-    ];
+    protected $manager;
 
     /**
      * Stubbed resource
@@ -38,37 +34,42 @@ class ResourceApiTest extends \TestCase
     /** @before */
     public function stub()
     {
-        $managers = factory(\Appkr\Fractal\Example\Manager::class, 3)->create()->toArray();
+        $this->manager = factory(\Appkr\Fractal\Example\Manager::class)->create([
+            'name' => 'foo'
+        ]);
 
-        $this->resource = factory(\Appkr\Fractal\Example\Resource::class)->create($this->overrides)->toArray();
+        $this->resource = factory(\Appkr\Fractal\Example\Resource::class)->create([
+            'title'      => 'title',
+            'manager_id' => $this->manager->id
+        ])->toArray();
     }
 
     /** @test */
-    public function it_fetches_a_collection_of_resources()
+    public function itFetchesACollectionOfResources()
     {
-        $this->get($this->basePath, $this->getHeaders())
+        $this->get(route('api.v1.resource.index'), $this->getHeaders())
             ->seeStatusCode(200)
             ->seeJson();
     }
 
     /** @test */
-    public function it_fetches_a_single_resource()
+    public function itFetchesASingleResource()
     {
-        $this->get("{$this->basePath}/{$this->resource['id']}", $this->getHeaders())
+        $this->get(route('api.v1.resource.show', $this->resource['id']), $this->getHeaders())
             ->seeStatusCode(200)
             ->seeJson();
     }
 
     /** @test */
-    public function it_responds_404_if_a_resource_is_not_found()
+    public function itResponds404IfAResourceIsNotFound()
     {
-        $this->get("{$this->basePath}/10000", $this->getHeaders())
+        $this->get(route('api.v1.resource.show', 100000), $this->getHeaders())
             ->seeStatusCode(404)
             ->seeJson();
     }
 
     /** @test */
-    public function it_responds_422_if_a_new_resource_request_fails_validation()
+    public function itResponds422IfANewResourceRequestFailsValidation()
     {
         $payload = [
             'title'       => null,
@@ -76,46 +77,49 @@ class ResourceApiTest extends \TestCase
             'description' => 'n'
         ];
 
-        $this->post($this->basePath, $payload, $this->getHeaders())
+        $this->post(route('api.v1.resource.store'), $payload, $this->getHeaders())
             ->seeStatusCode(422)
             ->seeJson();
     }
 
     /** @test */
-    public function it_responds_201_with_created_resource_after_creation()
+    public function itResponds201WithCreatedResourceAfterCreation()
     {
         $payload = [
             'title'       => 'new title',
-            'manager_id'  => 1,
+            'manager_id'  => $this->manager->id,
             'description' => 'new description'
         ];
 
-        $this->post($this->basePath, $payload, $this->getHeaders())
-            ->seeInDatabase('resources', $payload)
+        $this->actingAs($this->manager)
+            ->post(route('api.v1.resource.store'), $payload, $this->getHeaders())
+            ->seeInDatabase('resources', ['title' => 'new title'])
             ->seeStatusCode(201)
             ->seeJsonContains(['title' => 'new title']);
     }
 
     /** @test */
-    public function it_responds_200_if_a_update_request_is_succeed()
+    public function itResponds200IfAUpdateRequestIsSucceed()
     {
-        $this->put(
-            "{$this->basePath}/{$this->resource['id']}",
-            ['title' => 'MODIFIED title'],
-            $this->getHeaders(['x-http-method-override' => 'put'])
-        )
+        $this->actingAs($this->manager)
+            ->put(
+                route('api.v1.resource.update', $this->resource['id']),
+                ['title' => 'MODIFIED title', '_method' => 'PUT'],
+                $this->getHeaders()
+            )
             ->seeInDatabase('resources', ['title' => 'MODIFIED title'])
             ->seeStatusCode(200)
             ->seeJson();
     }
 
     /** @test */
-    public function it_responds_200_if_a_delete_request_is_succeed()
+    public function itResponds200IfADeleteRequestIsSucceed()
     {
-        $this->delete(
-            "{$this->basePath}/{$this->resource['id']}",
-            ['title' => 'MODIFIED title'],
-            $this->getHeaders(['x-http-method-override' => 'put'])
+        $this->actingAs($this->manager)
+            ->delete(
+            route('api.v1.resource.destroy', $this->resource['id']),
+            ['_method' => 'DELETE'],
+            $this->getHeaders()
         )
             ->notSeeInDatabase('resources', ['id' => $this->resource['id']])
             ->seeStatusCode(200)
@@ -131,6 +135,9 @@ class ResourceApiTest extends \TestCase
      */
     protected function getHeaders($append = [])
     {
-        return ['Authorization' => "Bearer $this->jwtToken"] + $append;
+        return [
+            'HTTP_Authorization' => "Bearer {$this->jwtToken}",
+            'HTTP_Accept'        => 'application/json'
+        ] + $append;
     }
 }
