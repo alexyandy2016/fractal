@@ -42,13 +42,7 @@ class ApiServiceProvider extends ServiceProvider
             return $manager;
         });
 
-        // Experiment
-        $this->app->bind('api.provider', function ($app) {
-            $manager = new Fractal;
-            $manager->setSerializer(app($app['config']['fractal']['serializer']));
-
-            return $manager;
-        });
+        $this->app->alias(Fractal::class, 'api.provider');
 
         $this->app->bind('api.response', Response::class);
     }
