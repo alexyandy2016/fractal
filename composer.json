@@ -10,14 +10,13 @@
       "homepage": "http://appkr.kr"
     }
   ],
-  "minimum-stability": "dev",
   "require": {
     "php": ">=5.5.0",
-    "illuminate/support": "5.*",
-    "league/fractal": "^0.13.0@dev"
+    "illuminate/support": "5.1.*",
+    "league/fractal": "dev-master"
   },
   "require-dev": {
-    "fzaninotto/faker": "^1.5@dev"
+    "fzaninotto/faker": "1.5.*"
   },
   "autoload": {
     "psr-4": {
