@@ -450,11 +450,7 @@ class Response
      */
     public function getMeta()
     {
-        $defaultMeta = config('fractal.defaultMeta');
-
-        return $defaultMeta
-            ? array_merge($defaultMeta, $this->meta)
-            : $this->meta;
+        return $this->meta;
     }
 
     /**

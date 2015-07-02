@@ -28,16 +28,6 @@ return [
     | Default Response Headers
     |--------------------------------------------------------------------------
     |
-    | Default meta data that every resource response should include
-    |
-    */
-    'defaultMeta' => ['version' => 1],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Default Response Headers
-    |--------------------------------------------------------------------------
-    |
     | Default response headers that every resource/simple response should includes
     |
     */

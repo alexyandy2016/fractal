@@ -1,8 +1,8 @@
-#Fractal wrapper for Laravel/Lumen 5#
+#Fractal wrapper for Laravel 5/Lumen#
 
 [![Latest Stable Version](https://poser.pugx.org/appkr/fractal/v/stable)](https://packagist.org/packages/appkr/fractal) [![Total Downloads](https://poser.pugx.org/appkr/fractal/downloads)](https://packagist.org/packages/appkr/fractal) [![Latest Unstable Version](https://poser.pugx.org/appkr/fractal/v/unstable)](https://packagist.org/packages/appkr/fractal) [![License](https://poser.pugx.org/appkr/fractal/license)](https://packagist.org/packages/appkr/fractal)
 
-This is a package, or rather, an **opinionated/laravel-istic use case of the famous [league/fractal](https://github.com/thephpleague/fractal) package in Laravel/Lumen 5 environment**.
+This is a package, or rather, an **opinionated/laravel-istic use case of the famous [league/fractal](https://github.com/thephpleague/fractal) package in Laravel 5/Lumen environment**.
 
 This project was started to fulfill a personal RESTful API service needs. In an initial attempt to evaluate various php API packages for Laravel, I found that the features of those packages providing are well excessive for my requirement.
 
@@ -14,8 +14,8 @@ Using this package, I didn't want user of this package to sacrifice Laravel's re
 ```php
 // Respond json formatted 'Resource' model 
 // including 'Manager' nesting, pagination, 
-// and additional meta of ['foo' => 'bar']
-return $this->response()->setMeta(['foo' => 'bar'])->withPagination(
+// and additional meta of ['version' => 1]
+return $this->response()->setMeta(['version' => 1])->withPagination(
     Resource::with('manager')->latest()->paginate(25),
     new ResourceTransformer
 );
@@ -45,7 +45,7 @@ return $this->response()->unprocessableError($errors);
 
 <a name="goal"></a>
 ##Goal
-- Provides easy access to Fractal instance for Laravel/Lumen 5 (ServiceProvider).
+- Provides easy access to Fractal instance for Laravel 5/Lumen (ServiceProvider).
 - Provides configuration capability for Fractal and response format.
 - Provides use case examples, so that users can quickly copy & paste to his/her project.
 
@@ -99,11 +99,7 @@ If you want to see the the working example right away, head over to `vendor/appk
 
 ```php
 // Uncomment the line at vendor/appkr/fractal/src/ApiServiceProvider.php
-public function boot()
-{
-    ...
-    $this->registerRoute();
-}
+$this->registerRoute();
 ```
 
 ```bash
@@ -144,7 +140,6 @@ and head on to `http://localhost:8000/api/v1/resource`. You should see below:
   ],
   "meta": {
     "version": 1,
-    "foo": "bar",
     "pagination": {
       "total": 100,
       "count": 25,
@@ -162,7 +157,11 @@ and head on to `http://localhost:8000/api/v1/resource`. You should see below:
 Assuming you've already set up a test environment, you can run `phpunit`, if your project is based on 5.1.* framework. 
 
 ```bash
-$ phpunit vendor/appkr/fractal/src/example/ResourceApiTest.php
+//For Laravel
+$ phpunit vendor/appkr/fractal/src/example/ResourceApiTestForLaravel.php
+
+// For Lumen
+$ phpunit vendor/appkr/fractal/src/example/ResourceApiTestForLumen.php
 ```
 
 **`Caution`** Special care should be taken, the test should not be done against the production database.
@@ -205,14 +204,14 @@ Route::group(['prefix' => 'api/v1'], function() {
 
 <a name="controller"></a>
 ###Controller
-It is recommended for your `SomethingController` or preferably `App\Http\Controllers\Controller` to import `Appkr\Fractal\ApiResponse`. By doing so, `SomethingController` can use `$this->response() or $this->respond()` as shown in the example. 
+It is recommended for your `SomethingController` or preferably `App\Http\Controllers\Controller` to import `Appkr\Fractal\ApiResponse` trait. By doing so, `SomethingController` can use `$this->response() or $this->respond()` as shown in the example. 
 
 Alternatively you can inject `Appkr\Fractal\Response` to the constructor of `SomethingController`.
 
 One lastly, you can get the `Appkr\Fractal\Response` instance from the Container, like `app('api.response')`.
 
 ```php
-// User trait
+// Use trait
 class SomethingController 
 {
     use Appkr\Fractal\ApiResponse;
@@ -416,6 +415,9 @@ setMeta(array $meta)
 
 ### Available helper methods
 ```
+// Determine the current framework is Laravel
+is_laravel()
+
 // Determine the current framework is Lumen
 is_lumen()
 

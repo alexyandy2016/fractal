@@ -37,13 +37,13 @@ class ResourceControllerForLumen extends Controller
     public function index()
     {
         // Respond with pagination
-        return $this->respond->setMeta(['foo' => 'bar'])->withPagination(
+        return $this->respond->setMeta(['version' => 1])->withPagination(
             $this->model->with('manager')->latest()->paginate(25),
             new ResourceTransformer
         );
 
         // Respond as a collection
-        return $this->respond->setMeta(['foo' => 'bar'])->withCollection(
+        return $this->respond->setMeta(['version' => 1])->withCollection(
             $this->model->with('manager')->latest()->get(),
             new ResourceTransformer
         );
@@ -91,7 +91,7 @@ class ResourceControllerForLumen extends Controller
      */
     public function show($id)
     {
-        return $this->respond->setMeta(['foo' => 'bar'])->withItem(
+        return $this->respond->setMeta(['version' => 1])->withItem(
             $this->model->findOrFail($id),
             new ResourceTransformer
         );

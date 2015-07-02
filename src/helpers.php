@@ -15,15 +15,15 @@ if (! function_exists('config_path')) {
     }
 }
 
-if (! function_exists('is_lumen')) {
+if (! function_exists('is_laravel')) {
     /**
      * Determine the current framework is Laravel
      *
      * @return bool
      */
-    function is_lumen()
+    function is_laravel()
     {
-        return starts_with(strtolower(app()->version()), 'lumen');
+        return starts_with(strtolower(app()->version()), 'laravel');
     }
 }
 

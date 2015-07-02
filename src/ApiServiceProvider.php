@@ -33,8 +33,6 @@ class ApiServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //$this->registerHelper();
-
         $this->app->singleton(Fractal::class, function ($app) {
             $manager = new Fractal;
             $manager->setSerializer(app($app['config']['fractal']['serializer']));
@@ -56,14 +54,6 @@ class ApiServiceProvider extends ServiceProvider
     {
         return ['api.provider', 'api.response'];
     }
-
-    /**
-     * Register helper functions
-     */
-    //protected function registerHelper()
-    //{
-    //    include __DIR__ . '/./helpers.php';
-    //}
 
     /**
      * Register config
@@ -96,12 +86,13 @@ class ApiServiceProvider extends ServiceProvider
      */
     protected function registerRoute()
     {
-        if (is_lumen()) {
-            $app = $this->app;
-            include __DIR__ . '/./example/routes-lumen.php';
-            return;
+        if (is_laravel()) {
+            return include __DIR__ . '/./example/routes.php';
         }
 
-        include __DIR__ . '/./example/routes.php';
+        if (is_lumen()) {
+            $app = $this->app;
+            return include __DIR__ . '/./example/routes-lumen.php';
+        }
     }
 }
