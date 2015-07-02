@@ -12,11 +12,11 @@
   ],
   "require": {
     "php": ">=5.5.0",
-    "illuminate/support": "5.1.*",
-    "league/fractal": "dev-master"
+    "illuminate/support": "5.*",
+    "league/fractal": "^0.13.0@dev"
   },
   "require-dev": {
-    "fzaninotto/faker": "1.5.*"
+    "fzaninotto/faker": "^1.5@dev"
   },
   "autoload": {
     "psr-4": {

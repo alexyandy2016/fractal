@@ -99,7 +99,12 @@ If you want to see the the working example right away, head over to `vendor/appk
 
 ```php
 // Uncomment the line at vendor/appkr/fractal/src/ApiServiceProvider.php
-$this->registerRoute();
+// For Laravel
+include __DIR__ . '/./example/routes.php';
+
+// For Lumen
+include __DIR__ . '/./example/routes-lumen.php';
+>>>>>>> master
 ```
 
 ```bash
@@ -166,17 +171,8 @@ $ phpunit vendor/appkr/fractal/src/example/ResourceApiTestForLumen.php
 
 **`Caution`** Special care should be taken, the test should not be done against the production database.
 
->**Note** If you finished evaluating the example, don't forget to rollback the migration and re-comment the unnecessary lines
->
->```php
->// Re-comment the line at vendor/appkr/fractal/src/ApiServiceProvider.php
->// $this->registerRoute();
->```
->
->```bash
->// Rollback migrations
->php artisan migrate:rollback
->```
+**`Note`** If you finished evaluating the example, don't forget to rollback the migration and re-comment the unnecessary lines
+
 ---
 
 <a name="best-practices"></a>
@@ -199,7 +195,7 @@ Route::group(['prefix' => 'api/v1'], function() {
     );
 });
 
-// For Lumen, checkout the example at vendor/appkr/fractal/src/example/routes.lumen.php
+// For Lumen, checkout the example at vendor/appkr/fractal/src/example/routes-lumen.php
 ```
 
 <a name="controller"></a>
@@ -245,7 +241,6 @@ class SomethingController
         app('api.response')->success('Hello API');
     }
 }
-```
 
 <a name="form-request"></a>
 ###FormRequest
