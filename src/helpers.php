@@ -23,7 +23,7 @@ if (! function_exists('is_laravel')) {
      */
     function is_laravel()
     {
-        return starts_with(strtolower(app()->version()), 'laravel');
+        return file_exists(base_path('vendor/laravel/framework/readme.md'));
     }
 }
 
@@ -35,7 +35,7 @@ if (! function_exists('is_lumen')) {
      */
     function is_lumen()
     {
-        return starts_with(strtolower(app()->version()), 'lumen');
+        return file_exists(base_path('vendor/laravel/lumen-framework/readme.md'));
     }
 }
 

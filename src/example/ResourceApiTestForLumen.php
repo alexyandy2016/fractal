@@ -66,7 +66,7 @@ class ResourceApiTestForLumen extends \TestCase
     /** @test */
     public function it_responds_404_if_a_resource_is_not_found()
     {
-        $this->get('api/v1/resource/10000', $this->getHeaders())
+        $this->get('api/v1/resource/100000', $this->getHeaders())
             ->seeStatusCode(404)
             ->seeJson();
     }
