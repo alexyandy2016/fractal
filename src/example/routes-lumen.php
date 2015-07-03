@@ -2,7 +2,6 @@
 
 $app->group(['prefix' => 'api/v1'], function($app) {
     $app->get('resource',[
-
         'as' => 'api.v1.resource.index',
         'uses' => \Appkr\Fractal\Example\ResourceControllerForLumen::class . '@index'
     ]);

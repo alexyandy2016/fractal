@@ -56,7 +56,7 @@ Use composer. Define `"appkr/fractal": "0.4.*"` at your project `composer.json`'
 Or require it directly at a console.
 
 ```bash
-composer require "appkr/fractal:0.4.*"
+$ composer require "appkr/fractal:0.4.*"
 ```
 
 Add the service provider.
@@ -171,7 +171,7 @@ $ phpunit vendor/appkr/fractal/src/example/ResourceApiTestForLumen.php
 
 **`Caution`** Special care should be taken, the test should not be done against the production database.
 
-**`Note`** If you finished evaluating the example, don't forget to rollback the migration and re-comment the unnecessary lines
+**`Note`** If you finished evaluating the example, don't forget to rollback the migration and re-comment the unnecessary lines at `ApiServiceProvider`.
 
 ---
 
@@ -241,6 +241,7 @@ class SomethingController
         app('api.response')->success('Hello API');
     }
 }
+```
 
 <a name="form-request"></a>
 ###FormRequest
@@ -439,6 +440,8 @@ Laravel is using method spoofing for `PUT|PATCH` and `DELETE` request, so your c
 Alternative way to achieve method spoofing in Laravel is using `X-HTTP-Method-Override` request header. The client has to send a POST request with `X-HTTP-Method-Override: PUT` header. 
 
 Either way works, so it comes down to your preference.
+
+Following table illustrates how an api client can access your api endpoint:
 
 Http verb|Endpoint address|Mandatory param (or header)|Controller method|Description
 ---|---|---|---|---
