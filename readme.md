@@ -56,7 +56,7 @@ Use composer. Define `"appkr/fractal": "0.4.*"` and `"league/fractal": "@dev",` 
 ```json
 "require": {
   "...": "...",
-  "appkr/fractal": "0.4.*",
+  "appkr/fractal": "~0.4",
   "league/fractal": "@dev",
 }
 ```
