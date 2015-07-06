@@ -61,7 +61,7 @@ Use composer. Define `"appkr/fractal": "0.4.*"` and `"league/fractal": "@dev",` 
 }
 ```
 
-**`Note`** Since this package depends on the `setMeta()` api of the `league/fractal` which is available only at 0.13.*@dev, but the `league/fractal` have not tagged a stable 0.13 release yet, we need to explicitly lower the minimum-stability of the `league/fractal` at our root project's composer.json. That way we can avoid lowering the minimum-stability setting to dev at our root project's composer.json.
+>**`Important`** Since this package depends on the `setMeta()` api of the `league/fractal` which is available only at 0.13.*@dev, but the `league/fractal` have not tagged a stable 0.13 release yet, we need to explicitly lower the minimum-stability of the `league/fractal` at our root project's composer.json. That way we can avoid lowering the minimum-stability setting to dev at our root project's composer.json.
 
 Add the service provider.
 
@@ -107,8 +107,8 @@ If you want to see the the working example right away, head over to `vendor/appk
 include __DIR__ . '/./example/routes.php';
 
 // For Lumen
+$app = $this->app;
 include __DIR__ . '/./example/routes-lumen.php';
->>>>>>> master
 ```
 
 ```bash
@@ -173,9 +173,9 @@ $ phpunit vendor/appkr/fractal/src/example/ResourceApiTestForLaravel.php
 $ phpunit vendor/appkr/fractal/src/example/ResourceApiTestForLumen.php
 ```
 
-**`Caution`** Special care should be taken, the test should not be done against the production database.
-
-**`Note`** If you finished evaluating the example, don't forget to rollback the migration and re-comment the unnecessary lines at `ApiServiceProvider`.
+>**`Caution`** Special care should be taken, the test should not be done against the production database.
+>
+>**`Note`** If you finished evaluating the example, don't forget to rollback the migration and re-comment the unnecessary lines at `ApiServiceProvider`.
 
 ---
 
