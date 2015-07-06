@@ -1,19 +1,18 @@
 {
   "name": "appkr/fractal",
   "description": "Fractal Wrapper for Laravel 5",
-  "type": "project",
+  "keywords": ["laravel", "api", "fractal"],
   "license": "MIT",
   "authors": [
     {
       "name": "Appkr",
-      "email": "juwonkim@me.com",
-      "homepage": "http://appkr.kr"
+      "email": "juwonkim@me.com"
     }
   ],
   "require": {
-    "php": ">=5.5.0",
-    "illuminate/support": "5.*",
-    "league/fractal": "dev-master"
+    "php": ">=5.5.9",
+    "illuminate/support": "5.1.*",
+    "league/fractal": "0.13.*@dev"
   },
   "require-dev": {
     "fzaninotto/faker": "1.5.*"
@@ -25,6 +24,12 @@
     "files": [
       "src/helpers.php"
     ]
+  },
+  "extra": {
+        "branch-alias": {
+            "dev-master": "0.4-dev"
+        }
+    }
   },
   "suggest": {
     "barryvdh/laravel-cors": "Handle CORS issue",
