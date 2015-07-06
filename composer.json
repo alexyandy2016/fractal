@@ -1,7 +1,11 @@
 {
   "name": "appkr/fractal",
   "description": "Fractal Wrapper for Laravel 5",
-  "keywords": ["laravel", "api", "fractal"],
+  "keywords": [
+    "laravel",
+    "api",
+    "fractal"
+  ],
   "license": "MIT",
   "authors": [
     {
@@ -26,9 +30,8 @@
     ]
   },
   "extra": {
-        "branch-alias": {
-            "dev-master": "0.4-dev"
-        }
+    "branch-alias": {
+      "dev-master": "0.4-dev"
     }
   },
   "suggest": {
