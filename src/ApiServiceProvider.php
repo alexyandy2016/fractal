@@ -28,7 +28,7 @@ class ApiServiceProvider extends ServiceProvider
         if (is_laravel()) {
             //include __DIR__ . '/./example/routes.php';
         } elseif (is_lumen()) {
-            //$app = $this->app
+            //$app = $this->app;
             //include __DIR__ . '/./example/routes-lumen.php';
         }
     }
