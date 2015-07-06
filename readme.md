@@ -51,13 +51,17 @@ return $this->response()->unprocessableError($errors);
 
 <a name="install"></a>
 ##Install
-Use composer. Define `"appkr/fractal": "0.4.*"` at your project `composer.json`'s require section and `composer update`.
+Use composer. Define `"appkr/fractal": "0.4.*"` and `"league/fractal": "@dev",` at your project `composer.json`'s require section and `composer update`.
 
-Or require it directly at a console.
-
-```bash
-$ composer require "appkr/fractal:0.4.*"
+```json
+"require": {
+  "...": "...",
+  "appkr/fractal": "0.4.*",
+  "league/fractal": "@dev",
+}
 ```
+
+**`Note`** Since this package depends on the `setMeta()` api of the `league/fractal` which is available only at 0.13.*@dev, but the `league/fractal` have not tagged a stable 0.13 release yet, we need to explicitly lower the minimum-stability of the `league/fractal` at our root project's composer.json. That way we can avoid lowering the minimum-stability setting to dev at our root project's composer.json.
 
 Add the service provider.
 
