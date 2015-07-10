@@ -5,14 +5,14 @@ namespace Appkr\Fractal\Example;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 
-class Manager extends Model implements Authenticatable
+class Author extends Model implements Authenticatable
 {
     /**
      * The database table used by the model.
      *
      * @var string
      */
-    protected $table = 'managers';
+    protected $table = 'authors';
 
     /**
      * The attributes that are mass assignable.

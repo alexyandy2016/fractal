@@ -1,6 +1,6 @@
 <?php
 
-namespace Appkr\Fractal;
+namespace Appkr\Fractal\Http;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -12,7 +12,7 @@ class Request extends FormRequest
     public function response(array $errors)
     {
         if (is_api_request()) {
-            return app('api.response')->unprocessableError($errors);
+            return app(Response::class)->unprocessableError($errors);
         }
 
         return $this->redirector->to($this->getRedirectUrl())
@@ -26,7 +26,7 @@ class Request extends FormRequest
     protected function failedAuthorization()
     {
         if (is_api_request()) {
-            return app('api.response')->unauthorizedError();
+            return app(Response::class)->unauthorizedError();
         }
 
         return parent::failedAuthorization();

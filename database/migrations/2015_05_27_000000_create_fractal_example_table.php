@@ -13,7 +13,7 @@ class CreateFractalExampleTable extends Migration
      */
     public function up()
     {
-        Schema::create('managers', function (Blueprint $table) {
+        Schema::create('authors', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
             $table->string('email');
@@ -23,7 +23,7 @@ class CreateFractalExampleTable extends Migration
         Schema::create('resources', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title');
-            $table->string('manager_id');
+            $table->string('author_id');
             $table->text('description')->nullable();
             $table->enum('deprecated', [0, 1])->default(0);
             $table->timestamps();
@@ -37,7 +37,7 @@ class CreateFractalExampleTable extends Migration
      */
     public function down()
     {
-        Schema::drop('managers');
+        Schema::drop('authors');
         Schema::drop('resources');
     }
 

@@ -2,7 +2,7 @@
 
 namespace Appkr\Fractal\Example;
 
-use Appkr\Fractal\Request;
+use Appkr\Fractal\Http\Request;
 
 class ResourceRequest extends Request
 {

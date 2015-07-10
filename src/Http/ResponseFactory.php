@@ -1,9 +1,14 @@
 <?php 
 
-namespace Appkr\Fractal;
+namespace Appkr\Fractal\Http;
 
 class ResponseFactory 
 {
+    /**
+     * Create an instance of Laravel or Lumen ResponseFactory
+     *
+     * @return \Laravel\Lumen\Http\ResponseFactory
+     */
     public function make()
     {
         if (is_lumen()) {

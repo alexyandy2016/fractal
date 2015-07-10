@@ -13,7 +13,7 @@ class ResourceTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'manager'
+        'author'
     ];
 
     /**
@@ -22,7 +22,7 @@ class ResourceTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-        'manager'
+        'author'
     ];
 
     /**
@@ -43,17 +43,17 @@ class ResourceTransformer extends TransformerAbstract
     }
 
     /**
-     * Include User
+     * Include Author
      *
      * @param \Appkr\Fractal\Example\Resource $resource
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeManager(Resource $resource)
+    public function includeAuthor(Resource $resource)
     {
-        $manager = $resource->manager;
+        $author = $resource->author;
 
-        return $manager
-            ? $this->item($manager, new ManagerTransformer)
+        return $author
+            ? $this->item($author, new AuthorTransformer)
             : null;
     }
 }

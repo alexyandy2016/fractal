@@ -18,29 +18,29 @@ class DatabaseSeeder extends Seeder
         Eloquent::unguard();
         $faker = Faker::create();
 
-        // Seeding managers table
-        Manager::truncate();
+        // Seeding authors table
+        Author::truncate();
 
         foreach (range(1, 10) as $index) {
-            Manager::create([
+            Author::create([
                 'name'  => $faker->userName,
                 'email' => $faker->safeEmail
             ]);
         }
 
-        $this->command->line("<info>Seeded:</info> managers table");
+        $this->command->line("<info>Seeded:</info> authors table");
 
         // Seeding resources table
         Resource::truncate();
 
-        $managerIds = (is_51())
-            ? Manager::lists('id')->toArray()
-            : Manager::lists('id');
+        $authorIds = (is_51())
+            ? Author::lists('id')->toArray()
+            : Author::lists('id');
 
         foreach (range(1, 100) as $index) {
             Resource::create([
                 'title'       => $faker->sentence(),
-                'manager_id'  => $faker->randomElement($managerIds),
+                'author_id'  => $faker->randomElement($authorIds),
                 'description' => $faker->randomElement([$faker->paragraph(), null]),
                 'deprecated'  => $faker->randomElement([0, 1])
             ]);

@@ -9,11 +9,11 @@ class ResourceApiTestForLumen extends \TestCase
     use DatabaseTransactions;
 
     /**
-     * Stubbed Manager model
+     * Stubbed Author model
      *
-     * @var \Appkr\Fractal\Example\Manager
+     * @var \Appkr\Fractal\Example\Author
      */
-    protected $manager;
+    protected $author;
 
     /**
      * Stubbed resource
@@ -34,14 +34,14 @@ class ResourceApiTestForLumen extends \TestCase
     {
         $faker = \Faker\Factory::create();
 
-        $this->manager = \Appkr\Fractal\Example\Manager::create([
+        $this->author = \Appkr\Fractal\Example\Author::create([
             'name'  => 'foo',
             'email' => $faker->safeEmail
         ]);
 
         $this->resource = \Appkr\Fractal\Example\Resource::create([
             'title'       => $faker->sentence(),
-            'manager_id'  => $this->manager->id,
+            'author_id'  => $this->author->id,
             'description' => $faker->randomElement([$faker->paragraph(), null]),
             'deprecated'  => $faker->randomElement([0, 1])
         ])->toArray();
@@ -76,7 +76,7 @@ class ResourceApiTestForLumen extends \TestCase
     {
         $payload = [
             'title'       => null,
-            'manager_id'  => null,
+            'author_id'  => null,
             'description' => 'n'
         ];
 
@@ -90,11 +90,11 @@ class ResourceApiTestForLumen extends \TestCase
     {
         $payload = [
             'title'       => 'new title',
-            'manager_id'  => $this->manager->id,
+            'author_id'  => $this->author->id,
             'description' => 'new description'
         ];
 
-        $this->actingAs($this->manager)
+        $this->actingAs($this->author)
             ->post('api/v1/resource', $payload, $this->getHeaders())
             ->seeInDatabase('resources', ['title' => 'new title'])
             ->seeStatusCode(201)
@@ -104,7 +104,7 @@ class ResourceApiTestForLumen extends \TestCase
     /** @test */
     public function it_responds_200_if_a_update_request_is_succeeded()
     {
-        $this->actingAs($this->manager)
+        $this->actingAs($this->author)
             ->put(
                 'api/v1/resource/' . $this->resource['id'],
                 ['title' => 'MODIFIED title', '_method' => 'PUT'],
@@ -118,7 +118,7 @@ class ResourceApiTestForLumen extends \TestCase
     /** @test */
     public function it_responds_200_if_a_delete_request_id_succeeded()
     {
-        $this->actingAs($this->manager)
+        $this->actingAs($this->author)
             ->delete(
                 'api/v1/resource/' . $this->resource['id'],
                 ['_method' => 'DELETE'],

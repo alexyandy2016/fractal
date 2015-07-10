@@ -2,21 +2,21 @@
 
 [![Latest Stable Version](https://poser.pugx.org/appkr/fractal/v/stable)](https://packagist.org/packages/appkr/fractal) [![Total Downloads](https://poser.pugx.org/appkr/fractal/downloads)](https://packagist.org/packages/appkr/fractal) [![Latest Unstable Version](https://poser.pugx.org/appkr/fractal/v/unstable)](https://packagist.org/packages/appkr/fractal) [![License](https://poser.pugx.org/appkr/fractal/license)](https://packagist.org/packages/appkr/fractal)
 
-This is a package, or rather, an **opinionated/laravel-istic use case of the famous [league/fractal](https://github.com/thephpleague/fractal) package in Laravel 5/Lumen environment**.
+This is a package, or rather, an **opnionated/laravelish use case of the famous [league/fractal](https://github.com/thephpleague/fractal) package for Laravel 5/Lumen**.
 
-This project was started to fulfill a personal RESTful API service needs. In an initial attempt to evaluate various php API packages for Laravel, I found that the features of those packages providing are well excessive for my requirement.
+This project was started to fulfill a personal RESTful API service needs. In an initial attempt to evaluate various php API packages for Laravel, I found that the features of those packages providing are well excessive of my requirement.
 
 If your requirement is simple like mine, this is the right package. But if you need more delicate package, head over to [chiraggude/awesome-laravel](https://github.com/chiraggude/awesome-laravel#restful-apis) to find a right one.
 
-Using this package, I didn't want user of this package to sacrifice Laravel's recommended coding practices which we all commonly know, without having to require a package specific syntax/usage. And most importantly, I wanted he/she could build his/her API service quickly based on the examples provided.
+Using this package, I didn't want user of this package to sacrifice Laravel's recommended coding practices without having to learn the package specific syntax/usage. And most importantly, I wanted he/she could build his/her API service quickly based on the examples provided.
 
 ## Usage
 ```php
 // Respond json formatted 'Resource' model 
-// including 'Manager' nesting, pagination, 
+// including 'Author' nesting, pagination, 
 // and additional meta of ['version' => 1]
 return $this->response()->setMeta(['version' => 1])->withPagination(
-    Resource::with('manager')->latest()->paginate(25),
+    Resource::with('author')->latest()->paginate(25),
     new ResourceTransformer
 );
 
@@ -45,25 +45,25 @@ return $this->response()->unprocessableError($errors);
 
 <a name="goal"></a>
 ##Goal
-- Provides easy access to Fractal instance for Laravel 5/Lumen (ServiceProvider).
+- Provides easy access to Fractal instance from Laravel 5/Lumen (ServiceProvider).
 - Provides configuration capability for Fractal and response format.
-- Provides use case examples, so that users can quickly copy & paste to his/her project.
+- Provides use case examples, so that users can quickly copy & paste into his/her project.
 
 <a name="install"></a>
 ##Install
-Use composer. Define `"appkr/fractal": "0.4.*"` and `"league/fractal": "@dev",` at your project `composer.json`'s require section and `composer update`.
+Setp #1: Use composer. Define `"appkr/fractal": "0.5.*"` and `"league/fractal": "@dev",` at your project `composer.json`'s require section and `composer update`.
 
 ```json
 "require": {
   "...": "...",
-  "appkr/fractal": "~0.4",
+  "appkr/fractal": "0.5.*",
   "league/fractal": "@dev",
 }
 ```
 
->**`Important`** Since this package depends on the `setMeta()` api of the `league/fractal` which is available only at 0.13.*@dev, but the `league/fractal` have not tagged a stable 0.13 release yet, we need to explicitly lower the minimum-stability of the `league/fractal` at our root project's composer.json. That way we can avoid lowering the minimum-stability setting to dev at our root project's composer.json.
+>**`Important`** Since this package depends on the `setMeta()` api of the `league/fractal` which is available only at 0.13.*@dev, but the `league/fractal` have not been tagged as a stable(say 0.13) yet, so we need to explicitly lower the minimum-stability of the `league/fractal` at our root project's composer.json. Note that this is just a temporarily measure.
 
-Add the service provider.
+Step #2: Add the service provider.
 
 ```php
 // For Laravel - config/app.php
@@ -75,14 +75,14 @@ Add the service provider.
 $app->register(Appkr\Fractal\ApiServiceProvider::class);
 ```
 
-Finally, issue a publish assets command at a console.
+Step #3: Finally, issue a publish assets command at a console.
 
 ```bash
 // For Laravel only
 $ php artisan vendor:publish --provider="Appkr\Fractal\ApiServiceProvider"
 ```
 
-Configuration file is located at `config/fractal.php` or `vendor/appkr/fractal/src/config/fractal.php`.
+Now the config file is located at `config/fractal.php`.
 
 Done !
 
@@ -99,17 +99,14 @@ The package is bundled with some simple example. Example classes are namespaced 
 - Transformer
 - Integration Test
 
-If you want to see the the working example right away, head over to `vendor/appkr/fractal/src/ApiServiceProvider.php`, uncomment the lines, and migrate/seed tables.
+Step #1: If you want to see the the working example right away, head over to `vendor/appkr/fractal/src/ApiServiceProvider.php`, uncomment following lines.
 
 ```php
 // Uncomment the line at vendor/appkr/fractal/src/ApiServiceProvider.php
-// For Laravel
-include __DIR__ . '/./example/routes.php';
-
-// For Lumen
-$app = $this->app;
-include __DIR__ . '/./example/routes-lumen.php';
+$this->publishExamples();
 ```
+
+Step #2: migrate/seed tables
 
 ```bash
 // Migrate/seed tables at a console
@@ -117,15 +114,16 @@ $ php artisan migrate --path=vendor/appkr/fractal/database/migrations
 $ php artisan db:seed --class="Appkr\Fractal\Example\DatabaseSeeder"
 ```
 
-Boot up the server, 
+Step #3: Boot up the server, 
 
 ```bash
 // Boot up your local dev server
 $ php artisan serve
 ```
 
-and head on to `http://localhost:8000/api/v1/resource`. You should see below:
+Step #4: head on to `http://localhost:8000/api/v1/resource`. 
 
+You should see below:
 ```json
 // GET http://localhost:8000/api/v1/resource
 {
@@ -163,7 +161,7 @@ and head on to `http://localhost:8000/api/v1/resource`. You should see below:
 }
 ```
 
-Assuming you've already set up a test environment, you can run `phpunit`, if your project is based on 5.1.* framework. 
+Optional Step: Assuming you've already set up a test environment, you can run `phpunit`, if your project is based on 5.1.* framework. 
 
 ```bash
 //For Laravel
@@ -206,15 +204,15 @@ Route::group(['prefix' => 'api/v1'], function() {
 ###Controller
 It is recommended for your `SomethingController` or preferably `App\Http\Controllers\Controller` to import `Appkr\Fractal\ApiResponse` trait. By doing so, `SomethingController` can use `$this->response() or $this->respond()` as shown in the example. 
 
-Alternatively you can inject `Appkr\Fractal\Response` to the constructor of `SomethingController`.
+Alternatively you can inject `Appkr\Fractal\Http\Response` to the constructor of `SomethingController`.
 
-One lastly, you can get the `Appkr\Fractal\Response` instance from the Container, like `app('api.response')`.
+One lastly, you can resolve the `Appkr\Fractal\Http\Response` instance from the Service Container, like `app('api.response')`.
 
 ```php
 // Use trait
 class SomethingController 
 {
-    use Appkr\Fractal\ApiResponse;
+    use Appkr\Fractal\Http\ApiResponse;
     
     public function index() {
         // We can use $this->response() or $this->respond() interchangeably
@@ -222,12 +220,12 @@ class SomethingController
     }
 }
 
-// Or inject Appkr\Fractal\Response
+// Or inject Appkr\Fractal\Http\Response
 class SomethingController 
 {
     protected $respond;
     
-    public function __construct(\Appkr\Fractal\Response $respond)
+    public function __construct(\Appkr\Fractal\Http\Response $respond)
     {
         $this->respond = $respond;
     }
@@ -252,16 +250,18 @@ class SomethingController
 It is recommended for `YourFormRequest` to extend `Appkr\Fractal\Request`. By extending the abstract request of this package, validation or authorization errors are properly formatted just like you configured at the `config/fractal.php`.
 
 ```php
-class YourFormRequest extends \Appkr\Fractal\Request {}
+class YourFormRequest extends \Appkr\Fractal\Http\Request {}
 ```
+
+Or you may move the class body of `Appkr\Fractal\Http\Request` to your `App\Http\Requests\Request`.
 
 <a name="transformer"></a>
 ###Transformer
-This package follows original Fractal Transformer spec. Refer to the original [documentation](http://fractal.thephpleague.com/transformers/). An example transformer is provided with this package.
+This package follows original Fractal Transformer spec. Refer to the original [documentation](http://fractal.thephpleague.com/transformers/). An example transformers are provided with this package.
 
 <a name="csrf"></a>
 ###Handle TokenMismatchException
-Laravel 5 throws `TokenMismatchException` when an client sends a post request(create, update, or delete a resource) to the API endpoint. Because the client exists in a separate domain or environment (e.g. android native application), no way for your server to publish csrf token to the client. It's more desirable to achieve a level of security through [tymondesigns/jwt-auth](https://github.com/tymondesigns/jwt-auth) or equivalent measures. (Recommended articles: [scotch.io](https://scotch.io/tutorials/the-ins-and-outs-of-token-based-authentication), [angular-tips.com](http://angular-tips.com/blog/2014/05/json-web-tokens-introduction/))
+Laravel 5/Lumen throws `TokenMismatchException` when an client sends a post request(create, update, or delete a resource) to the API endpoint. Because the client exists in a separate domain or environment (e.g. android native application), no way for your server to publish csrf token to the client. It's more desirable to achieve a level of security through [tymondesigns/jwt-auth](https://github.com/tymondesigns/jwt-auth) or equivalent measures. (Recommended articles: [scotch.io](https://scotch.io/tutorials/the-ins-and-outs-of-token-based-authentication), [angular-tips.com](http://angular-tips.com/blog/2014/05/json-web-tokens-introduction/))
 
 So, let's just skip it. 
 
@@ -288,7 +288,8 @@ public function handle($request, \Closure $next) {
     return parent::handle($request, $next);
 }
 
-// For Lumen, checkout Laravel\Lumen\Http\Middleware\VerifyCsrfToken
+// For Lumen, checkout Laravel\Lumen\Http\Middleware\VerifyCsrfToken 
+// instead of App\Http\Middleware\VerifyCsrfToken.php
 ```
 
 <a name="exception-formatting"></a>
@@ -333,7 +334,7 @@ I highly recommend utilize [barryvdh/laravel-cors](https://github.com/barryvdh/l
 <a name="api"></a>
 ##Avaliable Response Methods
 
-These are the list of methods that `Appkr\Fractal\Response` provides:
+These are the list of methods(api) that `Appkr\Fractal\Http\Response` provides. Think of this as a view layer for your restful service:
 
 ```php
 // Generic response. 

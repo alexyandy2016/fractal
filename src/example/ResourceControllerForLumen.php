@@ -3,7 +3,7 @@
 namespace Appkr\Fractal\Example;
 
 use App\Http\Controllers\Controller;
-use Appkr\Fractal\Response;
+use Appkr\Fractal\Http\Response;
 use Illuminate\Http\Request;
 
 class ResourceControllerForLumen extends Controller
@@ -15,13 +15,13 @@ class ResourceControllerForLumen extends Controller
     private $model;
 
     /**
-     * @var \Appkr\Fractal\Response
+     * @var \Appkr\Fractal\Http\Response
      */
     private $respond;
 
     /**
      * @param \Appkr\Fractal\Example\Resource $model
-     * @param \Appkr\Fractal\Response         $respond
+     * @param \Appkr\Fractal\Http\Response    $respond
      */
     public function __construct(Resource $model, Response $respond)
     {
@@ -38,13 +38,13 @@ class ResourceControllerForLumen extends Controller
     {
         // Respond with pagination
         return $this->respond->setMeta(['version' => 1])->withPagination(
-            $this->model->with('manager')->latest()->paginate(25),
+            $this->model->with('author')->latest()->paginate(25),
             new ResourceTransformer
         );
 
         // Respond as a collection
         return $this->respond->setMeta(['version' => 1])->withCollection(
-            $this->model->with('manager')->latest()->get(),
+            $this->model->with('author')->latest()->get(),
             new ResourceTransformer
         );
     }
@@ -62,11 +62,11 @@ class ResourceControllerForLumen extends Controller
             'description' => 'min:2'
         ]);
 
-        // Merging manager_id. In real project
+        // Merging author_id. In real project
         // we should use $request->user()->id instead.
         $data = array_merge(
             $request->all(),
-            ['manager_id' => 1]
+            ['author_id' => 1]
         );
 
         if (! $resource = Resource::create($data)) {

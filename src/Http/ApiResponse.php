@@ -1,13 +1,13 @@
 <?php
 
-namespace Appkr\Fractal;
+namespace Appkr\Fractal\Http;
 
 trait ApiResponse
 {
     /**
      * Get a Response instance
      *
-     * @return \Appkr\Fractal\Response
+     * @return \Appkr\Fractal\Http\Response
      */
     public function response()
     {
@@ -17,7 +17,7 @@ trait ApiResponse
     /**
      * Get a Response instance
      *
-     * @return \Appkr\Fractal\Response
+     * @return \Appkr\Fractal\Http\Response
      */
     public function respond()
     {

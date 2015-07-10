@@ -6,7 +6,7 @@ return [
     | Http status code
     |--------------------------------------------------------------------------
     |
-    | While leveraging Appkr\Fractal\Response at YourController,
+    | While leveraging Appkr\Fractal\Http\Response at YourController,
     | you can use below http status code like
     | return $this->respond()->internalError(trans('http.500'));
     |

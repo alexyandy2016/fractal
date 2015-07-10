@@ -20,16 +20,16 @@ class Resource extends Model
      */
     protected $fillable = [
         'title',
-        'manager_id',
+        'author_id',
         'description',
         'deprecated'
     ];
 
     # Relationships
 
-    public function manager()
+    public function author()
     {
-        return $this->belongsTo(Manager::class);
+        return $this->belongsTo(Author::class);
     }
 
 }

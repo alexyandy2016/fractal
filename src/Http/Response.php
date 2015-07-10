@@ -1,9 +1,10 @@
 <?php
 
-namespace Appkr\Fractal;
+namespace Appkr\Fractal\Http;
 
+use Appkr\Fractal\Transformers\SimpleArrayTransformer;
 use Illuminate\Http\Request;
-use League\Fractal\Manager;
+use League\Fractal\Manager as Fractal;
 use League\Fractal\Resource\Item as FractalItem;
 use League\Fractal\Resource\Collection as FractalCollection;
 use League\Fractal\Pagination\IlluminatePaginatorAdapter;
@@ -14,57 +15,35 @@ use League\Fractal\Serializer\JsonApiSerializer;
 
 class Response
 {
-    /**
-     * @var Manager
-     */
+    /** @var Manager */
     protected $fractal;
 
-    /**
-     * @var \Illuminate\Http\Request
-     */
+    /** @var \Illuminate\Http\Request */
     protected $request;
 
-    /**
-     * @var \Laravel\Lumen\Http\ResponseFactory|\Illuminate\Contracts\Routing\ResponseFactory
-     */
+    /** @var \Laravel\Lumen\Http\ResponseFactory|\Illuminate\Contracts\Routing\ResponseFactory */
     protected $response;
 
-    /**
-     * Http status code
-     *
-     * @var integer
-     */
+    /** @var integer Http status code */
     protected $statusCode = 200;
 
-    /**
-     * Http response headers
-     *
-     * @var array
-     */
+    /** @var array Http response headers */
     protected $headers = [];
 
-    /**
-     * List of includes
-     *
-     * @var string
-     */
+    /** @var string List of includes */
     protected $includes;
 
-    /**
-     * List of meta data to append to the response body
-     *
-     * @var array
-     */
+    /** @var array List of meta data to append to the response body */
     protected $meta = [];
 
     /**
      * Response.
      *
-     * @param \League\Fractal\Manager        $fractal
-     * @param \Illuminate\Http\Request       $request
-     * @param \Appkr\Fractal\ResponseFactory $response
+     * @param \League\Fractal\Manager             $fractal
+     * @param \Illuminate\Http\Request            $request
+     * @param \Appkr\Fractal\Http\ResponseFactory $response
      */
-    public function __construct(Manager $fractal, Request $request, ResponseFactory $response)
+    public function __construct(Fractal $fractal, Request $request, ResponseFactory $response)
     {
         $this->fractal  = $fractal;
         $this->request  = $request;
@@ -72,9 +51,10 @@ class Response
     }
 
     /**
-     * Generic response
+     * Generic response.
      *
-     * @param mixed $payload
+     * @api
+     * @param array|null $payload
      * @return \Illuminate\Contracts\Http\Response
      */
     public function respond($payload)
@@ -100,7 +80,7 @@ class Response
             );
     }
 
-    /** RESOURCE RESPONSES - Fractal transformed */
+    /* RESOURCE RESPONSES - Fractal transformed */
 
     /**
      * Respond collection of resources.
@@ -118,7 +98,7 @@ class Response
     }
 
     /**
-     * Create FractalCollection payload
+     * Create FractalCollection payload.
      *
      * @param \Illuminate\Database\Eloquent\Collection $collection
      * @param null                                     $transformer
@@ -127,23 +107,27 @@ class Response
      */
     public function getCollection(EloquentCollection $collection, $transformer = null, $resourceKey = null)
     {
-        $resource = new FractalCollection($collection, $this->getTransformer($transformer), $this->getResourceKey($resourceKey));
+        $resource = new FractalCollection(
+            $collection,
+            $this->getTransformer($transformer),
+            $this->getResourceKey($resourceKey)
+        );
 
         if ($meta = $this->getMeta()) {
             $resource->setMeta($meta);
-            $this->setMeta([]);
+            $this->meta = [];
         }
 
         if ($includes = $this->getIncludes()) {
             $this->fractal->parseIncludes($this->request->input('include'));
-            $this->setIncludes(null);
+            $this->includes = null;
         }
 
         return $this->fractal->createData($resource)->toArray();
     }
 
     /**
-     * Respond single item
+     * Respond single item.
      *
      * @param \Illuminate\Database\Eloquent\Model $model
      * @param                                     $transformer
@@ -158,7 +142,7 @@ class Response
     }
 
     /**
-     * Create FractalItem payload
+     * Create FractalItem payload.
      *
      * @param \Illuminate\Database\Eloquent\Model $model
      * @param null                                $transformer
@@ -167,23 +151,27 @@ class Response
      */
     public function getItem(EloquentModel $model, $transformer = null, $resourceKey = null)
     {
-        $resource = new FractalItem($model, $this->getTransformer($transformer), $this->getResourceKey($resourceKey));
+        $resource = new FractalItem(
+            $model,
+            $this->getTransformer($transformer),
+            $this->getResourceKey($resourceKey)
+        );
 
         if ($meta = $this->getMeta()) {
             $resource->setMeta($meta);
-            $this->setMeta([]);
+            $this->meta = [];
         }
 
         if ($includes = $this->getIncludes()) {
             $this->fractal->parseIncludes($this->request->input('include'));
-            $this->setIncludes(null);
+            $this->includes = null;
         }
 
         return $this->fractal->createData($resource)->toArray();
     }
 
     /**
-     * Respond collection of resources with pagination
+     * Respond collection of resources with pagination.
      *
      * @param \Illuminate\Contracts\Pagination\LengthAwarePaginator $paginator
      * @param                                                       $transformer
@@ -198,7 +186,7 @@ class Response
     }
 
     /**
-     * Create FractalCollection payload with pagination
+     * Create FractalCollection payload with pagination.
      *
      * @param \Illuminate\Contracts\Pagination\LengthAwarePaginator $paginator
      * @param null                                                  $transformer
@@ -208,7 +196,7 @@ class Response
     public function getPagination(LengthAwarePaginator $paginator, $transformer = null, $resourceKey = null)
     {
         // Append existing query parameter to pagination link
-        // Refer to http://fractal.thephpleague.com/pagination/#including-existing-query-string-values-in-pagination-links
+        // @see http://fractal.thephpleague.com/pagination/#including-existing-query-string-values-in-pagination-links
         $queryParams = array_diff_key($_GET, array_flip(['page']));
 
         foreach ($queryParams as $key => $value) {
@@ -217,39 +205,44 @@ class Response
 
         $collection = $paginator->getCollection();
 
-        $resource = new FractalCollection($collection, $this->getTransformer($transformer), $this->getResourceKey($resourceKey));
+        $resource = new FractalCollection(
+            $collection,
+            $this->getTransformer($transformer),
+            $this->getResourceKey($resourceKey)
+        );
         $resource->setPaginator(new IlluminatePaginatorAdapter($paginator));
 
         if ($meta = $this->getMeta()) {
             $resource->setMeta($meta);
-            $this->setMeta([]);
+            $this->meta = [];
         }
 
         if ($includes = $this->getIncludes()) {
             $this->fractal->parseIncludes($this->request->input('include'));
-            $this->setIncludes(null);
+            $this->includes = null;
         }
 
         return $this->fractal->createData($resource)->toArray();
     }
 
-    /** SIMPLE RESPONSES - Simple json responses for exchange of simple messages */
+    /* SIMPLE RESPONSES - Simple json responses for exchange of simple messages */
 
     /**
-     * Respond json formatted success message
+     * Respond json formatted success message.
      *
+     * @api
      * @param string $message
      * @return \Illuminate\Contracts\Http\Response
      */
     public function success($message)
     {
         return $this->respond(
-            $this->formatPayload($message, config('fractal.successFormat'))
+            $this->format($message, config('fractal.successFormat'))
         );
     }
 
     /**
-     * Respond 201
+     * Respond 201.
      *
      * @param mixed $primitive
      * @return $this
@@ -259,20 +252,20 @@ class Response
         $payload = null;
 
         if ($primitive instanceof EloquentModel) {
-            // In case an Eloquent Model was passed as the $primitive argument,
+            // If an Eloquent Model was passed as the $primitive argument,
             // it just defer the job to respondItem() method.
             // On receiving the job, respondItem() method does its best
             // to transform the given Elequent Model with SimpleArrayTransformer.
-            return $this->setStatusCode(201)->respondItem($primitive, null);
+            return $this->setStatusCode(201)->withItem($primitive);
         }
 
         return $this->setStatusCode(201)->respond(
-            $this->formatPayload($primitive, config('fractal.successFormat'))
+            $this->format($primitive, config('fractal.successFormat'))
         );
     }
 
     /**
-     * Respond 204
+     * Respond 204.
      *
      * @return \Illuminate\Contracts\Http\Response
      */
@@ -282,25 +275,37 @@ class Response
     }
 
     /**
-     * Generic error response
+     * Generic error response.
      *
+     * @api
      * @param mixed $message
      * @return $this
      */
     public function error($message = 'Unknown Error')
     {
+        $format = config('fractal.errorFormat');
+
         if ($message instanceof \Exception) {
             $this->statusCode = $this->translateExceptionCode($message);
             $message          = $message->getMessage();
+
+            if (env('APP_DEBUG')) {
+                $format['debug'] = [
+                    'line' => $message->getLine(),
+                    'file' => $message->getFile(),
+                    'class' => get_class($message),
+                    'trace' => explode("\n", $message->getTraceAsString())
+                ];
+            }
         }
 
         return $this->respond(
-            $this->formatPayload($message, config('fractal.errorFormat'))
+            $this->format($message, $format)
         );
     }
 
     /**
-     * Respond 401
+     * Respond 401.
      *
      * @param mixed $message
      * @return \Illuminate\Contracts\Http\Response
@@ -311,7 +316,7 @@ class Response
     }
 
     /**
-     * Respond 403
+     * Respond 403.
      *
      * @param mixed $message
      * @return \Illuminate\Contracts\Http\Response
@@ -322,7 +327,7 @@ class Response
     }
 
     /**
-     * Respond 404
+     * Respond 404.
      *
      * @param mixed $message
      * @return \Illuminate\Contracts\Http\Response
@@ -333,7 +338,7 @@ class Response
     }
 
     /**
-     * Respond 406
+     * Respond 406.
      *
      * @param mixed $message
      * @return \Illuminate\Contracts\Http\Response
@@ -344,7 +349,7 @@ class Response
     }
 
     /**
-     * Respond 422
+     * Respond 422.
      *
      * @param mixed $message
      * @return \Illuminate\Contracts\Http\Response
@@ -355,7 +360,7 @@ class Response
     }
 
     /**
-     * Respond 500
+     * Respond 500.
      *
      * @param mixed $message
      * @return \Illuminate\Contracts\Http\Response
@@ -365,10 +370,10 @@ class Response
         return $this->setStatusCode(500)->error($message);
     }
 
-    /** Public getter and setters */
+    /* Public getter and setters */
 
     /**
-     * Getter for statusCode property
+     * Getter for statusCode property.
      *
      * @return mixed
      */
@@ -378,7 +383,7 @@ class Response
     }
 
     /**
-     * Setter for statusCode property
+     * Setter for statusCode property.
      *
      * @param mixed $statusCode
      * @return $this
@@ -391,7 +396,7 @@ class Response
     }
 
     /**
-     * Getter for headers property
+     * Getter for headers property.
      *
      * @return array
      */
@@ -405,7 +410,7 @@ class Response
     }
 
     /**
-     * Setter for headers property
+     * Setter for headers property.
      *
      * @param array $headers
      * @return $this
@@ -420,9 +425,10 @@ class Response
     }
 
     /**
-     * Setter for includes property
+     * Setter for includes property.
      * This is a wrapper for Fractal::parseInclude()
      *
+     * @since 0.3
      * @param array|string $includes Array or csv string of resources to include
      * @return $this
      */
@@ -434,7 +440,7 @@ class Response
     }
 
     /**
-     * Getter for includes property
+     * Getter for includes property.
      *
      * @return string
      */
@@ -444,7 +450,7 @@ class Response
     }
 
     /**
-     * Getter for meta property
+     * Getter for meta property.
      *
      * @return array
      */
@@ -454,8 +460,9 @@ class Response
     }
 
     /**
-     * Setter for meta property
+     * Setter for meta property.
      *
+     * @since 0.2
      * @param $meta
      * @return $this
      */
@@ -477,13 +484,13 @@ class Response
     }
 
     /**
-     * Build response payload array based on configured format
+     * Build response payload array based on configured format.
      *
      * @param mixed $message
      * @param array $format
      * @return array
      */
-    public function formatPayload($message, array $format)
+    public function format($message, array $format)
     {
         $replace = [
             ':message' => $message,
@@ -499,15 +506,15 @@ class Response
         return $format;
     }
 
-    /** Protected and private methods for this class to be working */
+    /* Protected and private methods for this class to be working */
 
     /**
-     * Calculate transformer
+     * Calculate transformer.
      * Replace transformer to SimpleArrayTransformer
      * if nothing/null is passed
      *
      * @param $transformer
-     * @return \Appkr\Fractal\SimpleArrayTransformer|mixed
+     * @return \Appkr\Fractal\Transformers\SimpleArrayTransformer|mixed
      */
     private function getTransformer($transformer)
     {
@@ -515,7 +522,7 @@ class Response
     }
 
     /**
-     * Calculate the resourceKey
+     * Calculate the resourceKey.
      * If configured serializer is not an instance of JsonApiSerializer
      * the resourceKey is useless and null will be returned
      *
@@ -529,7 +536,7 @@ class Response
     }
 
     /**
-     * Translate http status code based on the given exception
+     * Translate http status code based on the given exception.
      *
      * @param \Exception $e
      * @return int
@@ -540,12 +547,14 @@ class Response
             return $e->getCode();
         }
 
-        if (! in_array($e->getStatusCode(), [0, -1, null, ''])) {
-            return $e->getStatusCode();
-        }
+        if (method_exists($e, 'getStatusCode')) {
+            if (! in_array($e->getStatusCode(), [0, -1, null, ''])) {
+                return $e->getStatusCode();
+            }
 
-        if (($statusCode = $this->getStatusCode()) != 200) {
-            return $statusCode;
+            if (($statusCode = $this->getStatusCode()) != 200) {
+                return $statusCode;
+            }
         }
 
         if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException
@@ -555,5 +564,19 @@ class Response
         }
 
         return 400;
+    }
+
+    /* Magic methods */
+
+    /**
+     * Dynamically call all other methods on the response object.
+     *
+     * @param string $method
+     * @param array  $parameters
+     * @return mixed
+     */
+    public function __call($method, $parameters)
+    {
+        return call_user_func_array([$this->response, $method], $parameters);
     }
 }

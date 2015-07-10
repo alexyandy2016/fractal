@@ -1,6 +1,6 @@
 <?php
 
-namespace Appkr\Fractal;
+namespace Appkr\Fractal\Transformers;
 
 use League\Fractal;
 use League\Fractal\TransformerAbstract;
