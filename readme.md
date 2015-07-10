@@ -88,6 +88,112 @@ Done !
 
 ---
 
+<a name="api"></a>
+##Avaliable Response Methods
+
+These are the list of methods(api) that `Appkr\Fractal\Http\Response` provides. Think of this as a view layer for your restful service:
+
+```php
+// Generic response. 
+// If valid callback parameter is provided, jsonp response is provided.
+// All other responses are depending upon this base respond() method.
+respond(array $payload)
+
+// Respond collection of resources
+// If $transformer is not given as the second argument,
+// this class does its best to transform the payload to a simple array
+withCollection(
+    \Illuminate\Database\Eloquent\Collection $collection, 
+    \League\Fractal\TransformerAbstract|null $transformer, 
+    string $resourceKey // for JsonApiSerializer only
+)
+
+// Respond single item
+withItem(
+    \Illuminate\Database\Eloquent\Model $model, 
+    \League\Fractal\TransformerAbstract|null $transformer, 
+    string $resourceKey // for JsonApiSerializer only
+)
+
+// Respond collection of resources with pagination
+withPagination(
+    \Illuminate\Contracts\Pagination\LengthAwarePaginator $paginator, 
+    \League\Fractal\TransformerAbstract|null $transformer, 
+    string $resourceKey // for JsonApiSerializer only
+)
+
+// Respond json formatted success message
+// The format can be configurable at fractal.successFormat
+success(string|array $message)
+
+// Respond 201
+// If a model is given at the first argument of this method,
+// the class tries its best to transform the model to a simple array
+created(string|array|\Illuminate\Database\Eloquent\Model $primitive)
+
+// Respond 204
+noContent()
+
+// Generic error response
+// All other error response depends upon this method
+// If an instance of Exception is given as the first argument,
+// this class does its best to properly set message and status code
+error(string|array|\Exception $message)
+
+// Respond 401
+unauthorizedError(string|array $message)
+
+// Respond 403
+forbiddenError(string|array $message)
+
+// Respond 404
+notFoundError(string|array $message)
+
+// Respond 406
+notAcceptableError(string|array $message)
+
+// Respond 422
+unprocessableError(string|array $message)
+
+// Respond 500
+internalError(string|array $message)
+
+// Set http status code
+// This method is chainable
+setStatusCode(int $statusCode)
+
+// Set http response header
+// This method is chainable
+setHeaders(array $headers)
+
+// Set additional meta data
+// This method is chainable
+setMeta(array $meta)
+```
+
+### Available helper methods
+```
+// Determine the current framework is Laravel
+is_laravel()
+
+// Determine the current framework is Lumen
+is_lumen()
+
+// Determine if the current version of framework is based on 5.1
+is_51()
+
+// Determine if the current request is generated from an api client
+is_api_request()
+
+// Determine if the request is for update
+is_update_request()
+
+// Determine if the request is for delete
+is_delete_request()
+```
+
+---
+
 <a name="example"></a>
 ##Bundled Example
 
@@ -328,112 +434,6 @@ public function render($request, Exception $e)
 ###Fighting against CORS Issue in Javascript-based Web Client
 
 I highly recommend utilize [barryvdh/laravel-cors](https://github.com/barryvdh/laravel-cors).
-
----
-
-<a name="api"></a>
-##Avaliable Response Methods
-
-These are the list of methods(api) that `Appkr\Fractal\Http\Response` provides. Think of this as a view layer for your restful service:
-
-```php
-// Generic response. 
-// If valid callback parameter is provided, jsonp response is provided.
-// All other responses are depending upon this base respond() method.
-respond(array $payload)
-
-// Respond collection of resources
-// If $transformer is not given as the second argument,
-// this class does its best to transform the payload to a simple array
-withCollection(
-    \Illuminate\Database\Eloquent\Collection $collection, 
-    \League\Fractal\TransformerAbstract|null $transformer, 
-    string $resourceKey // for JsonApiSerializer only
-)
-
-// Respond single item
-withItem(
-    \Illuminate\Database\Eloquent\Model $model, 
-    \League\Fractal\TransformerAbstract|null $transformer, 
-    string $resourceKey // for JsonApiSerializer only
-)
-
-// Respond collection of resources with pagination
-withPagination(
-    \Illuminate\Contracts\Pagination\LengthAwarePaginator $paginator, 
-    \League\Fractal\TransformerAbstract|null $transformer, 
-    string $resourceKey // for JsonApiSerializer only
-)
-
-// Respond json formatted success message
-// The format can be configurable at fractal.successFormat
-success(string|array $message)
-
-// Respond 201
-// If a model is given at the first argument of this method,
-// the class tries its best to transform the model to a simple array
-created(string|array|\Illuminate\Database\Eloquent\Model $primitive)
-
-// Respond 204
-noContent()
-
-// Generic error response
-// All other error response depends upon this method
-// If an instance of Exception is given as the first argument,
-// this class does its best to properly set message and status code
-error(string|array|\Exception $message)
-
-// Respond 401
-unauthorizedError(string|array $message)
-
-// Respond 403
-forbiddenError(string|array $message)
-
-// Respond 404
-notFoundError(string|array $message)
-
-// Respond 406
-notAcceptableError(string|array $message)
-
-// Respond 422
-unprocessableError(string|array $message)
-
-// Respond 500
-internalError(string|array $message)
-
-// Set http status code
-// This method is chainable
-setStatusCode(int $statusCode)
-
-// Set http response header
-// This method is chainable
-setHeaders(array $headers)
-
-// Set additional meta data
-// This method is chainable
-setMeta(array $meta)
-```
-
-### Available helper methods
-```
-// Determine the current framework is Laravel
-is_laravel()
-
-// Determine the current framework is Lumen
-is_lumen()
-
-// Determine if the current version of framework is based on 5.1
-is_51()
-
-// Determine if the current request is generated from an api client
-is_api_request()
-
-// Determine if the request is for update
-is_update_request()
-
-// Determine if the request is for delete
-is_delete_request()
-```
 
 ---
 

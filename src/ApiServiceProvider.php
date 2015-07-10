@@ -16,27 +16,7 @@ class ApiServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishConfig();
-
-        $this->publishExamples();
-
-        //$this->publishes([
-        //    realpath(__DIR__ . '/../config/fractal.php') => config_path('fractal.php'),
-        //    realpath(__DIR__ . '/../database/migrations/') => database_path('migrations'),
-        //    realpath(__DIR__ . '/../database/factories/') => database_path('factories')
-        //]);
-        //
-
-        //$this->mergeConfigFrom(
-        //    realpath(__DIR__ . '/../config/fractal.php'),
-        //    'fractal'
-        //);
-
-        //if (is_laravel()) {
-        //    include __DIR__ . '/./example/routes.php';
-        //} elseif (is_lumen()) {
-        //    $app = $this->app;
-        //    include __DIR__ . '/./example/routes-lumen.php';
-        //}
+        //$this->publishExamples();
     }
 
     /**
