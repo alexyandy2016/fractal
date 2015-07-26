@@ -2,7 +2,7 @@
 
 [![Latest Stable Version](https://poser.pugx.org/appkr/fractal/v/stable)](https://packagist.org/packages/appkr/fractal) [![Total Downloads](https://poser.pugx.org/appkr/fractal/downloads)](https://packagist.org/packages/appkr/fractal) [![Latest Unstable Version](https://poser.pugx.org/appkr/fractal/v/unstable)](https://packagist.org/packages/appkr/fractal) [![License](https://poser.pugx.org/appkr/fractal/license)](https://packagist.org/packages/appkr/fractal)
 
-This is a package, or rather, an **opnionated/laravelish use case of the famous [league/fractal](https://github.com/thephpleague/fractal) package for Laravel 5/Lumen**.
+This is a package, or rather, an **opinionated/laravelish use case of the famous [league/fractal](https://github.com/thephpleague/fractal) package for Laravel 5 and Lumen**.
 
 This project was started to fulfill a personal RESTful API service needs. In an initial attempt to evaluate various php API packages for Laravel, I found that the features of those packages providing are well excessive of my requirement.
 

@@ -286,9 +286,6 @@ class Response
         $format = config('fractal.errorFormat');
 
         if ($message instanceof \Exception) {
-            $this->statusCode = $this->translateExceptionCode($message);
-            $message          = $message->getMessage();
-
             if (env('APP_DEBUG')) {
                 $format['debug'] = [
                     'line' => $message->getLine(),
@@ -297,6 +294,9 @@ class Response
                     'trace' => explode("\n", $message->getTraceAsString())
                 ];
             }
+
+            $this->statusCode = $this->translateExceptionCode($message);
+            $message          = $message->getMessage();
         }
 
         return $this->respond(
