@@ -303,6 +303,17 @@ class Response
             $this->format($message, $format)
         );
     }
+    
+    /**
+     * Respond 400.
+     *
+     * @param mixed $message
+     * @return \Illuminate\Contracts\Http\Response
+     */
+    public function badRequestError($message = 'Bad Request')
+    {
+        return $this->setStatusCode(400)->error($message);
+    }
 
     /**
      * Respond 401.
@@ -346,6 +357,17 @@ class Response
     public function notAcceptableError($message = 'Not Acceptable')
     {
         return $this->setStatusCode(406)->error($message);
+    }
+    
+    /**
+     * Respond 409.
+     *
+     * @param mixed $message
+     * @return \Illuminate\Contracts\Http\Response
+     */
+    public function conflictError($message = 'Conflict')
+    {
+        return $this->setStatusCode(409)->error($message);
     }
 
     /**
