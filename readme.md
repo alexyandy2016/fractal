@@ -45,10 +45,10 @@ return $this->response()->unprocessableError($errors);
 
 <a name="goal"></a>
 ##Goal
-    1. Provides easy access to Fractal instance at Laravel 5/Lumen (ServiceProvider).
-    2. Provides easy way of make a Fractal transformed/serialized http response.
-    3. Provides configuration capability for Fractal and response format.
-    4. Provides use case examples, so that users can quickly copy & paste into his/her project.
+1. Provides easy access to Fractal instance at Laravel 5/Lumen (ServiceProvider).
+2. Provides easy way of make a Fractal transformed/serialized http response.
+3. Provides configuration capability for Fractal and response format.
+4. Provides use case examples, so that users can quickly copy & paste into his/her project.
 
 <a name="install"></a>
 ##How to Install
@@ -65,7 +65,7 @@ return $this->response()->unprocessableError($errors);
 composer update
 ```
 
->**`Important`** Since this package depends on the `setMeta()` api of the `league/fractal` which is available only at 0.13.*@dev, but the `league/fractal` have not been tagged as a stable(say 0.13) yet, so we need to explicitly lower the minimum-stability of the `league/fractal` at our root project's composer.json. Note that this is just a temporarily measure.
+**`Important`** Since this package depends on the `setMeta()` api of the `league/fractal` which is available only at 0.13.*@dev, but the `league/fractal` have not been tagged as a stable(say 0.13) yet, so we need to explicitly lower the minimum-stability of the `league/fractal` at our root project's composer.json. Note that this is just a temporarily measure.
 
 **Step #2:** Add the service provider.
 
@@ -203,11 +203,11 @@ is_delete_request()
 
 The package is bundled with some simple example. Those include:
 
-    - Database migrations and seeder
-    - routes definition, Eloquent Model and corresponding Controller
-    - FormRequest *(Laravel only)*
-    - Transformer
-    - Integration Test
+- Database migrations and seeder
+- routes definition, Eloquent Model and corresponding Controller
+- FormRequest *(Laravel only)*
+- Transformer
+- Integration Test
 
 If you want to see the the working example right away...
 
@@ -271,7 +271,7 @@ Head on to `http://localhost:8000/api/v1/resource`, and you should see below:
 }
 ```
 
->**`Note`** If you finished evaluating the example, don't forget to rollback the migration and re-comment the unnecessary lines at `ApiServiceProvider`.
+**`Note`** If you finished evaluating the example, don't forget to rollback the migration and re-comment the unnecessary lines at `ApiServiceProvider`.
 
 ---
 
