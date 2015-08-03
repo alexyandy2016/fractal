@@ -15,7 +15,6 @@
   ],
   "require": {
     "php": ">=5.5.9",
-    "illuminate/support": "5.1.*",
     "league/fractal": "0.13.*@dev"
   },
   "require-dev": {
