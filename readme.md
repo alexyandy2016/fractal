@@ -23,7 +23,7 @@ use Appkr\Fractal\Http\Response;
 
 class TodoController extends Controller
 {
-    protected $response;
+    protected $respond;
 
     public function __construct(Response $respond)
     {
