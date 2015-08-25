@@ -23,7 +23,7 @@ use Appkr\Fractal\Http\Response;
 
 class TodoController extends Controller
 {
-    protected $response;
+    protected $respond;
 
     public function __construct(Response $respond)
     {
@@ -38,6 +38,7 @@ class TodoController extends Controller
             'todos'
         );
     }
+}
 ```
 
 ---
@@ -78,7 +79,7 @@ class TodoController extends Controller
 ```
 
 ```bash
-composer update
+$ composer update -o
 ```
 
 **`Important`** Since this package depends on the `setMeta()` api of the `league/fractal` which is available only at 0.13.*@dev, but the `league/fractal` have not been tagged as a stable(say 0.13) yet, so we need to explicitly lower the minimum-stability of the `league/fractal` at our root project's composer.json. Note that this is just a temporarily measure.
