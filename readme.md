@@ -10,18 +10,34 @@ If your requirement is simple like mine, this is the right package. But if you n
 
 Using this package, I didn't want user of this package to sacrifice Laravel's recommended coding practices without having to learn the package specific syntax/usage. And most importantly, I wanted he/she could build his/her API service quickly based on the examples provided.
 
-## Usage Example
+## Simple Example Implementation
 ```php
-// Respond json formatted 'Resource' model 
-// including 'Author' nesting, pagination, 
-// and additional meta of ['version' => 1]
-return $this->response()->setMeta(['version' => 1])->withPagination(
-    Resource::with('author')->latest()->paginate(25),
-    new ResourceTransformer
-);
+<?php
 
-// Respond simple json error with 422 response code
-return $this->response()->unprocessableError($errors);
+namespace App\Http\Controllers\Api\V1;
+
+use App\Http\Controllers\Controller;
+use App\Todo;
+use App\Transformers\TodoTransformer;
+use Appkr\Fractal\Http\Response;
+
+class TodoController extends Controller
+{
+    protected $response;
+
+    public function __construct(Response $respond)
+    {
+        $this->respond = $respond;
+    }
+
+    public function index()
+    {
+        return $this->respond->withPagination(
+            Todo::latest()->paginate(25),
+            new TodoTransformer,
+            'todos'
+        );
+    }
 ```
 
 ---
@@ -155,6 +171,9 @@ notFoundError(string|array $message)
 
 // Respond 406
 notAcceptableError(string|array $message)
+
+// Respond 409
+conflictError(string|array $message)
 
 // Respond 422
 unprocessableError(string|array $message)

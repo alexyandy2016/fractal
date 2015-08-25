@@ -468,6 +468,10 @@ class Response
      */
     public function getIncludes()
     {
+        if ($includes = $this->request->input('include')) {
+            $this->setIncludes($includes);
+        }
+
         return $this->includes;
     }
 
