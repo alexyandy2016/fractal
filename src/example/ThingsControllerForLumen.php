@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Appkr\Fractal\Http\Response;
 use Illuminate\Http\Request;
 
-class ThingControllerForLumen extends Controller
+class ThingsControllerForLumen extends Controller
 {
     /**
      * @var \Appkr\Fractal\Example\Thing
