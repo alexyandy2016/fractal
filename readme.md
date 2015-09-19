@@ -17,26 +17,60 @@ Using this package, I didn't want user of this package to sacrifice Laravel's re
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Todo;
-use App\Transformers\TodoTransformer;
+use App\Http\Requests\ThingsRequest;
+use App\Thing;
+use App\Transformers\ThingTransformer;
 use Appkr\Fractal\Http\Response;
 
-class TodoController extends Controller
+class ThingsController extends Controller
 {
-    protected $respond;
+    protected $response;
 
-    public function __construct(Response $respond)
+    public function __construct(Response $response)
     {
-        $this->respond = $respond;
+        $this->response = $response;
     }
 
     public function index()
     {
-        return $this->respond->withPagination(
-            Todo::latest()->paginate(25),
-            new TodoTransformer,
-            'todos'
+        return $this->response->withPagination(
+            Thing::latest()->paginate(25),
+            new ThingTransformer
         );
+    }
+
+    public function store(ThingsRequest $request)
+    {
+        return $this->response->created(Thing::create(array_merge(
+            $request->all(),
+            $request->user()->id
+        )));
+    }
+
+    public function show($id)
+    {
+        return $this->response->withItem(
+            $this->model->findOrFail($id),
+            new ThingTransformer
+        );
+    }
+
+    public function update(ThingsRequest $request, $id)
+    {
+        $thing = Thing::findOrFail($id);
+
+        return ($thing->update($request->all()))
+            ? $this->response->success('Updated')
+            : $this->response->error('Fail to update');
+    }
+
+    public function destroy($id)
+    {
+        $thing = Thing::findOrFail($id);
+
+        return ($thing->delete())
+            ? $this->respond->success('Deleted')
+            : $this->respond->error('Fail to delete');
     }
 }
 ```
@@ -65,7 +99,7 @@ class TodoController extends Controller
 1. Provides easy access to Fractal instance at Laravel 5/Lumen (ServiceProvider).
 2. Provides easy way of make a Fractal transformed/serialized http response.
 3. Provides configuration capability for Fractal and response format.
-4. Provides use case examples, so that users can quickly copy & paste into his/her project.
+4. Provides examples, so that users can quickly copy & paste into his/her project.
 
 <a name="install"></a>
 ##How to Install
@@ -79,10 +113,10 @@ class TodoController extends Controller
 ```
 
 ```bash
-$ composer update -o
+composer update
 ```
 
-**`Important`** Since this package depends on the `setMeta()` api of the `league/fractal` which is available only at 0.13.*@dev, but the `league/fractal` have not been tagged as a stable(say 0.13) yet, so we need to explicitly lower the minimum-stability of the `league/fractal` at our root project's composer.json. Note that this is just a temporarily measure.
+**`Important`** This package depends on the `setMeta()` api of the `league/fractal` which is available only at 0.13.*@dev. But the `league/fractal` has not been tagged as stable yet, so we need to explicitly designate `league/fractal` version at our root project's composer.json. Note that I will update this readme as soon as the `league/fractal` being tagged.
 
 **Step #2:** Add the service provider.
 
@@ -96,7 +130,7 @@ $ composer update -o
 $app->register(Appkr\Fractal\ApiServiceProvider::class);
 ```
 
-**Step #3:** Publish assets.
+**Step #3:** [OPTIONAL] Publish assets.
 
 ```bash
 // For Laravel only
@@ -109,15 +143,14 @@ Done !
 
 ---
 
-<a name="api"></a>
-##Avaliable Response Methods
+##[Avaliable Response Methods](#api)
 
-These are the list of apis that `Appkr\Fractal\Http\Response` provides. By utilizing this apis you can be easily make a Fractal transformed/serialized http response. You can think of this as a view layer for your restful service:
+This is a list of apis that `Appkr\Fractal\Http\Response` provides. You can think of this as a view layer for your restful service:
 
 ```php
 // Generic response. 
-// If valid callback parameter is provided, jsonp response is provided.
-// All other responses are depending upon this base respond() method.
+// If valid callback parameter is provided, jsonp response can be provided.
+// This is a very base method. All other responses are utilizing this.
 respond(array $payload)
 
 // Respond collection of resources
@@ -144,11 +177,11 @@ withPagination(
 )
 
 // Respond json formatted success message
-// The format can be configurable at fractal.successFormat
+// fractal.php provides configuration capability
 success(string|array $message)
 
 // Respond 201
-// If a model is given at the first argument of this method,
+// If an Eloquent model is given at an argument,
 // the class tries its best to transform the model to a simple array
 created(string|array|\Illuminate\Database\Eloquent\Model $primitive)
 
@@ -156,15 +189,17 @@ created(string|array|\Illuminate\Database\Eloquent\Model $primitive)
 noContent()
 
 // Generic error response
-// All other error response depends upon this method
-// If an instance of Exception is given as the first argument,
-// this class does its best to properly set message and status code
+// This is another base method. Every other error responses use this.
+// If an instance of \Exception is given as an argument,
+// this class does its best to properly format a message and status code
 error(string|array|\Exception $message)
 
 // Respond 401
+// Note that this actually means unauthenticated
 unauthorizedError(string|array $message)
 
 // Respond 403
+// Note that this actually means unauthorized
 forbiddenError(string|array $message)
 
 // Respond 404
@@ -221,7 +256,7 @@ is_delete_request()
 <a name="example"></a>
 ##Bundled Example
 
-The package is bundled with some simple example. Those include:
+The package is bundled with some simple examples. Those include:
 
 - Database migrations and seeder
 - routes definition, Eloquent Model and corresponding Controller
@@ -238,15 +273,24 @@ If you want to see the the working example right away...
 $this->publishExamples();
 ```
 
-**Step #2:** Migrate and seed tables
+**Step #2:** [OPTIONAL] Prepare testing environment
+```bash
+// create testing database
+$ touch storage/database.sqlite
+
+// config/database.php
+'default' => app()->environment('testing') ? 'sqlite' : env('DB_CONNECTION', 'mysql'),
+```
+
+**Step #3:** Migrate and seed tables
 
 ```bash
 // Migrate/seed tables at a console
-$ php artisan migrate --path=vendor/appkr/fractal/database/migrations
-$ php artisan db:seed --class="Appkr\Fractal\Example\DatabaseSeeder"
+$ php artisan migrate --path="vendor/appkr/fractal/database/migrations" --env="testing"
+$ php artisan db:seed --class="Appkr\Fractal\Example\DatabaseSeeder" --env="testing"
 ```
 
-**Step #3:** Boot up a test server and open at a browser
+**Step #4:** Boot up a test server and open at a browser
 
 ```bash
 // Boot up a local server
@@ -257,58 +301,59 @@ Head on to `http://localhost:8000/api/v1/resource`, and you should see below:
 
 ```json
 {
-  "data": [
-    {
-      "id": 100,
-      "title": "Eos voluptatem officiis perferendis quas.",
-      "description": null,
-      "deprecated": true,
-      "created_at": 1434608210,
-      "manager": {
-        "id": 5,
-        "name": "mlittel",
-        "email": "cora85@example.org",
-        "created_at": 1434608210
-      }
-    },
-    {
-      "..."
+    "data": [
+        {
+            "id": 1,
+            "title": "Quia sunt culpa numquam blanditiis alias dignissimos aspernatur.",
+            "description": null,
+            "deprecated": false,
+            "created_at": "2015-09-19T08:07:55+0000",
+            "link": {
+                "rel": "self",
+                "href": "http://localhost:8000/v1/things/1?include=author"
+            },
+            "author": "landen08"
+        },
+        {"...": "..."}
+    ],
+    "meta": {
+        "version": 1,
+        "documentation": "http://localhost:8000/v1/doc",
+        "pagination": {
+            "total": 106,
+            "count": 25,
+            "per_page": 25,
+            "current_page": 1,
+            "total_pages": 5,
+            "links": {
+                "next": "http://localhost:8000/v1/things/?page=2"
+            }
+        }
     }
-  ],
-  "meta": {
-    "version": 1,
-    "pagination": {
-      "total": 100,
-      "count": 25,
-      "per_page": 25,
-      "current_page": 1,
-      "total_pages": 4,
-      "links": {
-        "next": "http:\\/\\/localhost:8000\\/api\\/v1\\/resource\\/?page=2"
-      }
-    }
-  }
-}
+```
+
+**Step #5:** [OPTIONAL] phpunit
+
+```bash
+$ phpunit vendor/appkr/fractal/src/example/ThingApiTestForLaravel.php
 ```
 
 **`Note`** If you finished evaluating the example, don't forget to rollback the migration and re-comment the unnecessary lines at `ApiServiceProvider`.
 
 ---
 
-<a name="best-practices"></a>
-##Best Practices
+##[Best Practices](#best-practices)
 
-<a name="route"></a>
-###Route (API Endpoints)
+###[Route (API Endpoints)](#route)
 You can define your routes just like laravel way.
 
 ```php
 // app/Http/routes.php
 
-Route::group(['prefix' => 'api/v1'], function() {
+Route::group(['prefix' => 'v1'], function() {
     Route::resource(
-        'something',
-        SomethingController::class,
+        'things',
+        ThingsController::class,
         ['except' => ['create', 'edit']]
     );
 });
@@ -318,11 +363,11 @@ Route::group(['prefix' => 'api/v1'], function() {
 
 <a name="controller"></a>
 ###Controller
-It is recommended for your `SomethingController` to inject `Appkr\Fractal\Http\Response`. Alternative ways are using `Appkr\Fractal\ApiResponse` trait, or `app('api.response')`.
+It is recommended for your `ThingsController` to inject `Appkr\Fractal\Http\Response`. Alternative ways are using `Appkr\Fractal\ApiResponse` trait, or `app('api.response')`.
 
 ```php
 // Injectting Appkr\Fractal\Http\Response
-class SomethingController 
+class ThingsController
 {
     protected $respond;
     
@@ -340,7 +385,7 @@ class SomethingController
 
 ```php
 // Using trait
-class SomethingController 
+class ThingsController
 {
     use Appkr\Fractal\Http\ApiResponse;
     
@@ -353,7 +398,7 @@ class SomethingController
 
 ```php
 // Or get the instance out of the Service Container
-class SomethingController 
+class ThingsController
 {
     public function index() {
         app('api.response')->success('Hello API');
@@ -361,21 +406,18 @@ class SomethingController
 }
 ```
 
-<a name="form-request"></a>
-###FormRequest
-It is recommended for `YourFormRequest` to extend `Appkr\Fractal\Request`. By extending the abstract request of this package, validation or authorization errors are properly formatted just like you configured at the `config/fractal.php`. Or you may move the class body of `Appkr\Fractal\Http\Request` to your `App\Http\Requests\Request`.
+###[FormRequest](#form-request)
+It is recommended for `YourFormRequest` to extend `Appkr\Fractal\Request`. By extending the abstract request of this package, validation or authorization errors are properly formatted just like you configured at the `config/fractal.php`. Or you may move the class content of `Appkr\Fractal\Http\Request` to your `App\Http\Requests\Request`.
 
 ```php
 class YourFormRequest extends \Appkr\Fractal\Http\Request {}
 ```
 
-<a name="transformer"></a>
-###Transformer
+###[Transformer](#transformer)
 This package follows original Fractal Transformer spec. Refer to the original [documentation](http://fractal.thephpleague.com/transformers/). An example transformers are provided with this package.
 
-<a name="csrf"></a>
-###Handle TokenMismatchException
-Laravel 5/Lumen throws `TokenMismatchException` when an client sends a post request(create, update, or delete a resource) to the API endpoint. Because the client can exists in a separate domain or environment (e.g. android native application), no way for your server to publish csrf token to the client. It's more desirable to achieve a level of security through [tymondesigns/jwt-auth](https://github.com/tymondesigns/jwt-auth) or equivalent measures. (Recommended articles: [scotch.io](https://scotch.io/tutorials/the-ins-and-outs-of-token-based-authentication), [angular-tips.com](http://angular-tips.com/blog/2014/05/json-web-tokens-introduction/))
+###[Handle TokenMismatchException](#csrf)
+Laravel 5/Lumen throws `TokenMismatchException` when an client sends a post request(create, update, or delete) to the API endpoint. Because the client can exist in a separate domain or environment (e.g. android native application), no way for your server to publish csrf token to the client. It's more desirable to achieve a level of security through JWT [tymondesigns/jwt-auth](https://github.com/tymondesigns/jwt-auth) or equivalent measures. (Recommended articles: [scotch.io](https://scotch.io/tutorials/the-ins-and-outs-of-token-based-authentication), [angular-tips.com](http://angular-tips.com/blog/2014/05/json-web-tokens-introduction/))
 
 So, let's just skip it. 
 
@@ -406,8 +448,7 @@ public function handle($request, \Closure $next) {
 // instead of App\Http\Middleware\VerifyCsrfToken.php
 ```
 
-<a name="exception-formatting"></a>
-###Formatting Laravel's General Exceptions.
+###[Formatting Laravel's General Exceptions](#exception-formatting)
 For example, I thought 404 with json response was more appropriate for `Illuminate\Database\Eloquent\ModelNotFoundException`, when the request was originated from API clients, but the current version of Laravel just rendered 404 html page. To properly format this, I did:
 
 ```php
@@ -438,19 +479,17 @@ public function render($request, Exception $e)
 }
 ```
 
-<a name="cors"></a>
-###Fighting against CORS Issue in Javascript-based Web Client
+###[Fighting against CORS Issue in Javascript-based Web Client](#cors)
 
 I highly recommend utilize [barryvdh/laravel-cors](https://github.com/barryvdh/laravel-cors).
 
 ---
 
-<a name="client"></a>
-##Access API Endpoints from a Client
+##[Access API Endpoints from a Client](#client)
 
-Laravel is using method spoofing for `PUT|PATCH` and `DELETE` request, so your client should also request as so. For example if a client want to make a `PUT` request to `//host/api/v1/resource/1`, the client should send a `POST` request to the API endpoint with additional request body of `_method=put`.
+Laravel is using method spoofing(a.k.a. method overriding) for `PUT|PATCH` and `DELETE` request, so your client should also request as so. For example if a client want to make a `PUT` request to `//host/api/v1/resource/1`, the client should send a `POST` request to the API endpoint with additional request body of `_method=put`.
 
-Alternative way to achieve method spoofing in Laravel is using `X-HTTP-Method-Override` request header. The client has to send a POST request with `X-HTTP-Method-Override: PUT` header. 
+Alternative way to achieve method spoofing in Laravel is using `X-HTTP-Method-Override` request header. For example, `X-HTTP-Method-Override: put`.
 
 Either way works, so it comes down to your preference.
 

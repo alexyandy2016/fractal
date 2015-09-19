@@ -6,11 +6,10 @@ use App\Http\Controllers\Controller;
 use Appkr\Fractal\Http\Response;
 use Illuminate\Http\Request;
 
-class ResourceControllerForLumen extends Controller
+class ThingControllerForLumen extends Controller
 {
-
     /**
-     * @var \Appkr\Fractal\Example\Resource
+     * @var \Appkr\Fractal\Example\Thing
      */
     private $model;
 
@@ -20,10 +19,10 @@ class ResourceControllerForLumen extends Controller
     private $respond;
 
     /**
-     * @param \Appkr\Fractal\Example\Resource $model
-     * @param \Appkr\Fractal\Http\Response    $respond
+     * @param \Appkr\Fractal\Example\Thing $model
+     * @param \Appkr\Fractal\Http\Response $respond
      */
-    public function __construct(Resource $model, Response $respond)
+    public function __construct(Thing $model, Response $respond)
     {
         $this->model   = $model;
         $this->respond = $respond;
@@ -39,14 +38,14 @@ class ResourceControllerForLumen extends Controller
         // Respond with pagination
         return $this->respond->setMeta(['version' => 1])->withPagination(
             $this->model->with('author')->latest()->paginate(25),
-            new ResourceTransformer
+            new ThingTransformer
         );
 
         // Respond as a collection
-        return $this->respond->setMeta(['version' => 1])->withCollection(
-            $this->model->with('author')->latest()->get(),
-            new ResourceTransformer
-        );
+        //return $this->respond->setMeta(['version' => 1])->withCollection(
+        //    $this->model->with('author')->latest()->get(),
+        //    new ThingTransformer
+        //);
     }
 
     /**
@@ -69,18 +68,18 @@ class ResourceControllerForLumen extends Controller
             ['author_id' => 1]
         );
 
-        if (! $resource = Resource::create($data)) {
+        if (! $thing = Thing::create($data)) {
             return $this->respond->internalError('Failed to create !');
         }
 
         // respond created item with 201 status code
         return $this->respond->setStatusCode(201)->withItem(
-            $resource,
-            new ResourceTransformer
+            $thing,
+            new ThingTransformer
         );
 
         // respond with simple message
-        return $this->respond->created('Created');
+        //return $this->respond->created('Created');
     }
 
     /**
@@ -93,7 +92,7 @@ class ResourceControllerForLumen extends Controller
     {
         return $this->respond->setMeta(['version' => 1])->withItem(
             $this->model->findOrFail($id),
-            new ResourceTransformer
+            new ThingTransformer
         );
     }
 
@@ -112,9 +111,9 @@ class ResourceControllerForLumen extends Controller
             'deprecated'  => 'boolean'
         ]);
 
-        $resource = $this->model->findOrFail($id);
+        $thing = $this->model->findOrFail($id);
 
-        if (! $resource->update($request->all())) {
+        if (! $thing->update($request->all())) {
             return $this->respond->internalError('Failed to update !');
         }
 
@@ -130,9 +129,9 @@ class ResourceControllerForLumen extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        $resource = $this->model->findOrFail($id);
+        $thing = $this->model->findOrFail($id);
 
-        if (! $resource->delete()) {
+        if (! $thing->delete()) {
             return $this->respond->internalError('Failed to delete !');
         }
 

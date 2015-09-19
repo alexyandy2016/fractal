@@ -1,8 +1,8 @@
-<?php 
+<?php
 
 namespace Appkr\Fractal\Http;
 
-class ResponseFactory 
+class ResponseFactory
 {
     /**
      * Create an instance of Laravel or Lumen ResponseFactory

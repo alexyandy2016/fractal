@@ -74,7 +74,7 @@ if (! function_exists('is_update_request')) {
         $needle = ['put', 'patch'];
 
         return in_array(strtolower(app('request')->input('_method')), $needle)
-            or in_array(strtolower(app('request')->header('x-http-method-override')), $needle);
+        or in_array(strtolower(app('request')->header('x-http-method-override')), $needle);
     }
 }
 
@@ -89,6 +89,6 @@ if (! function_exists('is_delete_request')) {
         $needle = 'delete';
 
         return strtolower(app('request')->input('_method')) == $needle
-            or strtolower(app('request')->header('x-http-method-override')) == $needle;
+        or strtolower(app('request')->header('x-http-method-override')) == $needle;
     }
 }

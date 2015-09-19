@@ -5,7 +5,6 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateFractalExampleTable extends Migration
 {
-
     /**
      * Run the migrations.
      *
@@ -20,7 +19,7 @@ class CreateFractalExampleTable extends Migration
             $table->timestamps();
         });
 
-        Schema::create('resources', function (Blueprint $table) {
+        Schema::create('things', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title');
             $table->string('author_id');
@@ -38,7 +37,7 @@ class CreateFractalExampleTable extends Migration
     public function down()
     {
         Schema::drop('authors');
-        Schema::drop('resources');
+        Schema::drop('things');
     }
 
 }

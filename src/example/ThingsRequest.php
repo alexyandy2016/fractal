@@ -4,7 +4,7 @@ namespace Appkr\Fractal\Example;
 
 use Appkr\Fractal\Http\Request;
 
-class ResourceRequest extends Request
+class ThingsRequest extends Request
 {
     /**
      * @var array

@@ -1,10 +1,10 @@
 <?php
 
-namespace Appkr\Fractal\Example\Test;
+namespace Appkr\Fractal\Example;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
-class ResourceApiTestForLumen extends \TestCase
+class ThingApiTestForLumen extends \TestCase
 {
     use DatabaseTransactions;
 
@@ -16,11 +16,11 @@ class ResourceApiTestForLumen extends \TestCase
     protected $author;
 
     /**
-     * Stubbed resource
+     * Stubbed thing
      *
      * @var array
      */
-    protected $resource = [];
+    protected $things = [];
 
     /**
      * JWT token
@@ -39,92 +39,92 @@ class ResourceApiTestForLumen extends \TestCase
             'email' => $faker->safeEmail
         ]);
 
-        $this->resource = \Appkr\Fractal\Example\Resource::create([
+        $this->things = \Appkr\Fractal\Example\Thing::create([
             'title'       => $faker->sentence(),
-            'author_id'  => $this->author->id,
+            'author_id'   => $this->author->id,
             'description' => $faker->randomElement([$faker->paragraph(), null]),
             'deprecated'  => $faker->randomElement([0, 1])
         ])->toArray();
     }
 
     /** @test */
-    public function it_fetches_a_collection_of_resources()
+    public function it_fetches_a_collection_of_things()
     {
-        $this->get('api/v1/resource', $this->getHeaders())
+        $this->get('v1/things', $this->getHeaders())
             ->seeStatusCode(200)
             ->seeJson();
     }
 
     /** @test */
-    public function it_fetches_a_single_resource()
+    public function it_fetches_a_instance_of_thing()
     {
-        $this->get('api/v1/resource/' . $this->resource['id'], $this->getHeaders())
+        $this->get('v1/things/' . $this->things['id'], $this->getHeaders())
             ->seeStatusCode(200)
             ->seeJson();
     }
 
     /** @test */
-    public function it_responds_404_if_a_resource_is_not_found()
+    public function it_responds_404_if_requested_thing_is_not_found()
     {
-        $this->get('api/v1/resource/100000', $this->getHeaders())
+        $this->get('v1/things/100000', $this->getHeaders())
             ->seeStatusCode(404)
             ->seeJson();
     }
 
     /** @test */
-    public function it_responds_422_if_a_new_resource_request_fails_validation()
+    public function it_responds_422_if_create_thing_request_fails_validation()
     {
         $payload = [
             'title'       => null,
-            'author_id'  => null,
+            'author_id'   => null,
             'description' => 'n'
         ];
 
-        $this->post('api/v1/resource', $payload, $this->getHeaders())
+        $this->post('v1/things', $payload, $this->getHeaders())
             ->seeStatusCode(422)
             ->seeJson();
     }
 
     /** @test */
-    public function it_responds_201_with_created_resource_after_creation()
+    public function it_responds_201_after_creation()
     {
         $payload = [
             'title'       => 'new title',
-            'author_id'  => $this->author->id,
+            'author_id'   => $this->author->id,
             'description' => 'new description'
         ];
 
         $this->actingAs($this->author)
-            ->post('api/v1/resource', $payload, $this->getHeaders())
-            ->seeInDatabase('resources', ['title' => 'new title'])
+            ->post('v1/things', $payload, $this->getHeaders())
+            ->seeInDatabase('things', ['title' => 'new title'])
             ->seeStatusCode(201)
             ->seeJsonContains(['title' => 'new title']);
     }
 
     /** @test */
-    public function it_responds_200_if_a_update_request_is_succeeded()
+    public function it_responds_200_if_a_update_request_success()
     {
         $this->actingAs($this->author)
             ->put(
-                'api/v1/resource/' . $this->resource['id'],
+                'v1/things/' . $this->things['id'],
                 ['title' => 'MODIFIED title', '_method' => 'PUT'],
                 $this->getHeaders()
             )
-            ->seeInDatabase('resources', ['title' => 'MODIFIED title'])
+            ->seeInDatabase('things', ['title' => 'MODIFIED title'])
             ->seeStatusCode(200)
             ->seeJson();
     }
 
     /** @test */
-    public function it_responds_200_if_a_delete_request_id_succeeded()
+    public function it_responds_200_if_a_delete_request_success()
     {
         $this->actingAs($this->author)
             ->delete(
-                'api/v1/resource/' . $this->resource['id'],
+                'v1/things/' . $this->things['id'],
                 ['_method' => 'DELETE'],
                 $this->getHeaders()
             )
-            ->notSeeInDatabase('resources', ['id' => $this->resource['id']])
+            ->notSeeInDatabase('things', ['id' => $this->things['id']])
             ->seeStatusCode(200)
             ->seeJson();
     }
@@ -133,7 +133,6 @@ class ResourceApiTestForLumen extends \TestCase
      * Set/Get http request header
      *
      * @param array $append
-     *
      * @return array
      */
     protected function getHeaders($append = [])

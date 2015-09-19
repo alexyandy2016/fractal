@@ -4,14 +4,14 @@ namespace Appkr\Fractal\Example;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Resource extends Model
+class Thing extends Model
 {
     /**
      * The database table used by the model.
      *
      * @var string
      */
-    protected $table = 'resources';
+    protected $table = 'things';
 
     /**
      * The attributes that are mass assignable.

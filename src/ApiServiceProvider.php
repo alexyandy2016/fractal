@@ -16,7 +16,9 @@ class ApiServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishConfig();
-        //$this->publishExamples();
+
+        // Uncomment below to activate the example
+        $this->publishExamples();
     }
 
     /**
@@ -29,6 +31,7 @@ class ApiServiceProvider extends ServiceProvider
         $this->app->singleton(Fractal::class, function ($app) {
             $fractal = new Fractal;
             $fractal->setSerializer(app($app['config']['fractal']['serializer']));
+
             return $fractal;
         });
 
@@ -56,10 +59,11 @@ class ApiServiceProvider extends ServiceProvider
     /**
      * Publish examples
      */
-    protected function publishExamples() {
+    protected function publishExamples()
+    {
         $this->publishes([
             realpath(__DIR__ . '/../database/migrations/') => database_path('migrations'),
-            realpath(__DIR__ . '/../database/factories/') => database_path('factories')
+            realpath(__DIR__ . '/../database/factories/')  => database_path('factories')
         ]);
 
         if (is_laravel()) {

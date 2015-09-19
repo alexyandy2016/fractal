@@ -9,7 +9,7 @@ $factory->define(Appkr\Fractal\Example\Author::class, function (Faker $faker) {
     ];
 });
 
-$factory->define(Appkr\Fractal\Example\Resource::class, function (Faker $faker) {
+$factory->define(Appkr\Fractal\Example\Thing::class, function (Faker $faker) {
     return [
         'title'       => $faker->sentence,
         'author_id'   => $faker->randomElement([1, 2, 3]),

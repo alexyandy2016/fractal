@@ -288,8 +288,8 @@ class Response
         if ($message instanceof \Exception) {
             if (env('APP_DEBUG')) {
                 $format['debug'] = [
-                    'line' => $message->getLine(),
-                    'file' => $message->getFile(),
+                    'line'  => $message->getLine(),
+                    'file'  => $message->getFile(),
                     'class' => get_class($message),
                     'trace' => explode("\n", $message->getTraceAsString())
                 ];
@@ -303,7 +303,7 @@ class Response
             $this->format($message, $format)
         );
     }
-    
+
     /**
      * Respond 400.
      *
@@ -358,7 +358,7 @@ class Response
     {
         return $this->setStatusCode(406)->error($message);
     }
-    
+
     /**
      * Respond 409.
      *

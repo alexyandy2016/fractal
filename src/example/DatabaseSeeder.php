@@ -31,21 +31,21 @@ class DatabaseSeeder extends Seeder
         $this->command->line("<info>Seeded:</info> authors table");
 
         // Seeding resources table
-        Resource::truncate();
+        Thing::truncate();
 
         $authorIds = (is_51())
             ? Author::lists('id')->toArray()
             : Author::lists('id');
 
         foreach (range(1, 100) as $index) {
-            Resource::create([
+            Thing::create([
                 'title'       => $faker->sentence(),
-                'author_id'  => $faker->randomElement($authorIds),
+                'author_id'   => $faker->randomElement($authorIds),
                 'description' => $faker->randomElement([$faker->paragraph(), null]),
                 'deprecated'  => $faker->randomElement([0, 1])
             ]);
         }
 
-        $this->command->line("<info>Seeded:</info> resources table");
+        $this->command->line("<info>Seeded:</info> things table");
     }
 }

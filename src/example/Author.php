@@ -26,9 +26,9 @@ class Author extends Model implements Authenticatable
 
     # Relationships
 
-    public function resources()
+    public function things()
     {
-        return $this->hasMany(Resource::class);
+        return $this->hasMany(Thing::class);
     }
 
     /**
@@ -65,7 +65,6 @@ class Author extends Model implements Authenticatable
      * Set the token value for the "remember me" session.
      *
      * @param  string $value
-     *
      * @return void
      */
     public function setRememberToken($value)
@@ -81,4 +80,5 @@ class Author extends Model implements Authenticatable
     public function getRememberTokenName()
     {
         // TODO: Implement getRememberTokenName() method.
-    }}
+    }
+}
