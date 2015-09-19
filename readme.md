@@ -10,7 +10,7 @@ If your requirement is simple like mine, this is the right package. But if you n
 
 Using this package, I didn't want user of this package to sacrifice Laravel's recommended coding practices without having to learn the package specific syntax/usage. And most importantly, I wanted he/she could build his/her API service quickly based on the examples provided.
 
-## Simple Example Implementation
+## Example Implementation
 ```php
 <?php
 
@@ -50,7 +50,7 @@ class ThingsController extends Controller
     public function show($id)
     {
         return $this->response->withItem(
-            $this->model->findOrFail($id),
+            Thing::findOrFail($id),
             new ThingTransformer
         );
     }
@@ -69,8 +69,8 @@ class ThingsController extends Controller
         $thing = Thing::findOrFail($id);
 
         return ($thing->delete())
-            ? $this->respond->success('Deleted')
-            : $this->respond->error('Fail to delete');
+            ? $this->response->success('Deleted')
+            : $this->response->error('Fail to delete');
     }
 }
 ```
@@ -94,15 +94,13 @@ class ThingsController extends Controller
 
 ---
 
-<a name="goal"></a>
-##Goal
+##[Goal](#goal)
 1. Provides easy access to Fractal instance at Laravel 5/Lumen (ServiceProvider).
 2. Provides easy way of make a Fractal transformed/serialized http response.
 3. Provides configuration capability for Fractal and response format.
 4. Provides examples, so that users can quickly copy & paste into his/her project.
 
-<a name="install"></a>
-##How to Install
+##[How to Install](#install)
 **Setp #1:** Composer.
 
 ```json
@@ -113,10 +111,10 @@ class ThingsController extends Controller
 ```
 
 ```bash
-composer update
+$ composer update
 ```
 
-**`Important`** This package depends on the `setMeta()` api of the `league/fractal` which is available only at 0.13.*@dev. But the `league/fractal` has not been tagged as stable yet, so we need to explicitly designate `league/fractal` version at our root project's composer.json. Note that I will update this readme as soon as the `league/fractal` being tagged.
+**`Important`** _This package depends on the `setMeta()` api of the `league/fractal` which is available only at 0.13.*@dev. But the `league/fractal` has not been tagged as stable yet, so we need to explicitly designate `league/fractal` version at our root project's composer.json. Note that I will update this readme as soon as the `league/fractal` being tagged._
 
 **Step #2:** Add the service provider.
 
@@ -253,8 +251,7 @@ is_delete_request()
 
 ---
 
-<a name="example"></a>
-##Bundled Example
+##[Bundled Example](#example)
 
 The package is bundled with some simple examples. Those include:
 
@@ -297,7 +294,7 @@ $ php artisan db:seed --class="Appkr\Fractal\Example\DatabaseSeeder" --env="test
 $ php artisan serve
 ```
 
-Head on to `http://localhost:8000/api/v1/resource`, and you should see below:
+Head on to `http://localhost:8000/v1/resource`, and you should see below:
 
 ```json
 {
@@ -334,6 +331,27 @@ Head on to `http://localhost:8000/api/v1/resource`, and you should see below:
 
 **Step #5:** [OPTIONAL] phpunit
 
+Prepare testing environment.
+
+```bash
+// create testing database
+$ touch storage/database.sqlite
+```
+
+```php
+// config/database.php
+'default' => app()->environment('testing') ? 'sqlite' : env('DB_CONNECTION', 'mysql'),
+```
+
+Migrate and seed test tables.
+
+```bash
+$ php artisan migrate --path="vendor/appkr/fractal/database/migrations" --env="testing"
+$ php artisan db:seed --class="Appkr\Fractal\Example\DatabaseSeeder" --env="testing"
+```
+
+Run phpunit.
+
 ```bash
 $ phpunit vendor/appkr/fractal/src/example/ThingApiTestForLaravel.php
 ```
@@ -361,8 +379,8 @@ Route::group(['prefix' => 'v1'], function() {
 // For Lumen, checkout the example at vendor/appkr/fractal/src/example/routes-lumen.php
 ```
 
-<a name="controller"></a>
-###Controller
+
+###[Controller](#controller)
 It is recommended for your `ThingsController` to inject `Appkr\Fractal\Http\Response`. Alternative ways are using `Appkr\Fractal\ApiResponse` trait, or `app('api.response')`.
 
 ```php
@@ -427,7 +445,7 @@ If your project is Laravel 5.1.* based, it couldn't be easier:
 // app/Http/Middleware/VerifyCsrfToken.php
 
 protected $except = [
-    'api/*' // or config('fractal/pattern')
+    'v1/*' // or config('fractal/pattern')
 ];
 ```
 
@@ -437,7 +455,7 @@ In Laravel 5.0/Lumen, I did it like this:
 // For Laravel 5.0 - app/Http/Middleware/VerifyCsrfToken.php
 
 public function handle($request, \Closure $next) {
-    if ($request->is('api/*')) {
+    if ($request->is('v1/*')) {
         return $next($request);
     }
 
@@ -456,8 +474,8 @@ For example, I thought 404 with json response was more appropriate for `Illumina
 
 public function render($request, Exception $e) 
 {
-    // We can use is_api_request() helper instead of $request->is('api/*')
-    if ($request->is('api/*')) { 
+    // We can use is_api_request() helper instead of $request->is('v1/*')
+    if ($request->is('v1/*')) { 
         if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException
             or $e instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException) {
                 return app('api.response')->notFoundError(
@@ -487,7 +505,7 @@ I highly recommend utilize [barryvdh/laravel-cors](https://github.com/barryvdh/l
 
 ##[Access API Endpoints from a Client](#client)
 
-Laravel is using method spoofing(a.k.a. method overriding) for `PUT|PATCH` and `DELETE` request, so your client should also request as so. For example if a client want to make a `PUT` request to `//host/api/v1/resource/1`, the client should send a `POST` request to the API endpoint with additional request body of `_method=put`.
+Laravel is using method spoofing(a.k.a. method overriding) for `PUT|PATCH` and `DELETE` request, so your client should also request as so. For example if a client want to make a `PUT` request to `//host/v1/resource/1`, the client should send a `POST` request to the API endpoint with additional request body of `_method=put`.
 
 Alternative way to achieve method spoofing in Laravel is using `X-HTTP-Method-Override` request header. For example, `X-HTTP-Method-Override: put`.
 
@@ -497,11 +515,11 @@ Following table illustrates how an api client can access your api endpoint:
 
 Http verb|Endpoint address|Mandatory param (or header)|Controller method|Description
 ---|---|---|---|---
-GET|//host/api/v1/something| |`index()`|Get a collection of resource
-GET|//host/api/v1/something/{id}| |`show()`|Get the specified resource
-POST|//host/api/v1/something| |`store()`|Create new resource
-POST|//host/api/v1/something/{id}|`_method=put` `(x-http-method-override: put)`|`update()`|Update the specified resource
-POST|//host/api/v1/something/{id}|`_method=delete` `(x-http-method-override: delete)`|`delete()`|Delete the specified resource
+GET|//host/v1/something| |`index()`|Get a collection of resource
+GET|//host/v1/something/{id}| |`show()`|Get the specified resource
+POST|//host/v1/something| |`store()`|Create new resource
+POST|//host/v1/something/{id}|`_method=put` `(x-http-method-override: put)`|`update()`|Update the specified resource
+POST|//host/v1/something/{id}|`_method=delete` `(x-http-method-override: delete)`|`delete()`|Delete the specified resource
 
 ---
 

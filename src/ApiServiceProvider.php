@@ -18,7 +18,7 @@ class ApiServiceProvider extends ServiceProvider
         $this->publishConfig();
 
         // Uncomment below to activate the example
-        $this->publishExamples();
+        // $this->publishExamples();
     }
 
     /**
