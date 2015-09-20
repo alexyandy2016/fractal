@@ -270,16 +270,21 @@ If you want to see the the working example right away...
 $this->publishExamples();
 ```
 
-**Step #2:** [OPTIONAL] Prepare testing environment
+**Step #2:** Migrate and seed tables
+
+Prepare testing environment.
+
 ```bash
 // create testing database
 $ touch storage/database.sqlite
+```
 
+```php
 // config/database.php
 'default' => app()->environment('testing') ? 'sqlite' : env('DB_CONNECTION', 'mysql'),
 ```
 
-**Step #3:** Migrate and seed tables
+Migrate and seed test tables.
 
 ```bash
 // Migrate/seed tables at a console
@@ -287,14 +292,14 @@ $ php artisan migrate --path="vendor/appkr/fractal/database/migrations" --env="t
 $ php artisan db:seed --class="Appkr\Fractal\Example\DatabaseSeeder" --env="testing"
 ```
 
-**Step #4:** Boot up a test server and open at a browser
+**Step #3:** Boot up a test server and open an example endpoint at a browser
 
 ```bash
 // Boot up a local server
-$ php artisan serve
+$ php artisan serve --env="testing"
 ```
 
-Head on to `http://localhost:8000/v1/resource`, and you should see below:
+Head on to `http://localhost:8000/v1/things`, and you should see below:
 
 ```json
 {
@@ -330,27 +335,6 @@ Head on to `http://localhost:8000/v1/resource`, and you should see below:
 ```
 
 **Step #5:** [OPTIONAL] phpunit
-
-Prepare testing environment.
-
-```bash
-// create testing database
-$ touch storage/database.sqlite
-```
-
-```php
-// config/database.php
-'default' => app()->environment('testing') ? 'sqlite' : env('DB_CONNECTION', 'mysql'),
-```
-
-Migrate and seed test tables.
-
-```bash
-$ php artisan migrate --path="vendor/appkr/fractal/database/migrations" --env="testing"
-$ php artisan db:seed --class="Appkr\Fractal\Example\DatabaseSeeder" --env="testing"
-```
-
-Run phpunit.
 
 ```bash
 $ phpunit vendor/appkr/fractal/src/example/ThingApiTestForLaravel.php
@@ -505,7 +489,7 @@ I highly recommend utilize [barryvdh/laravel-cors](https://github.com/barryvdh/l
 
 ##[Access API Endpoints from a Client](#client)
 
-Laravel is using method spoofing(a.k.a. method overriding) for `PUT|PATCH` and `DELETE` request, so your client should also request as so. For example if a client want to make a `PUT` request to `//host/v1/resource/1`, the client should send a `POST` request to the API endpoint with additional request body of `_method=put`.
+Laravel is using method spoofing(a.k.a. method overriding) for `PUT|PATCH` and `DELETE` request, so your client should also request as so. For example if a client want to make a `PUT` request to `//host/v1/things/1`, the client should send a `POST` request to the API endpoint with additional request body of `_method=put`.
 
 Alternative way to achieve method spoofing in Laravel is using `X-HTTP-Method-Override` request header. For example, `X-HTTP-Method-Override: put`.
 
@@ -515,11 +499,11 @@ Following table illustrates how an api client can access your api endpoint:
 
 Http verb|Endpoint address|Mandatory param (or header)|Controller method|Description
 ---|---|---|---|---
-GET|//host/v1/something| |`index()`|Get a collection of resource
-GET|//host/v1/something/{id}| |`show()`|Get the specified resource
-POST|//host/v1/something| |`store()`|Create new resource
-POST|//host/v1/something/{id}|`_method=put` `(x-http-method-override: put)`|`update()`|Update the specified resource
-POST|//host/v1/something/{id}|`_method=delete` `(x-http-method-override: delete)`|`delete()`|Delete the specified resource
+GET|//host/v1/things| |`index()`|Get a collection of resource
+GET|//host/v1/things/{id}| |`show()`|Get the specified resource
+POST|//host/v1/things| |`store()`|Create new resource
+POST|//host/v1/things/{id}|`_method=put` `(x-http-method-override: put)`|`update()`|Update the specified resource
+POST|//host/v1/things/{id}|`_method=delete` `(x-http-method-override: delete)`|`delete()`|Delete the specified resource
 
 ---
 
