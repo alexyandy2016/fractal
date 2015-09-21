@@ -481,7 +481,7 @@ public function render($request, Exception $e)
 }
 ```
 
-###[Fighting against CORS Issue in Javascript-based Web Client](#cors)
+###[Fighting against "Same Origin Policy" in Javascript-based Web Client](#cors)
 
 I highly recommend utilize [barryvdh/laravel-cors](https://github.com/barryvdh/laravel-cors).
 
