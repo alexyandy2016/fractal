@@ -1,20 +1,5 @@
 <?php
 
-if (! function_exists('config_path')) {
-    /**
-     * Get the configuration path.
-     *
-     * @param  string $path
-     * @return string
-     */
-    function config_path($path = '')
-    {
-        $configPath = sprintf('config/%s', $path);
-
-        return base_path($path ? DIRECTORY_SEPARATOR . $configPath : $configPath);
-    }
-}
-
 if (! function_exists('is_laravel')) {
     /**
      * Determine the current framework is Laravel

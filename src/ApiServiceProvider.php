@@ -47,7 +47,7 @@ class ApiServiceProvider extends ServiceProvider
     protected function publishConfig()
     {
         $this->publishes([
-            realpath(__DIR__ . '/../config/fractal.php') => config_path('fractal.php')
+            realpath(__DIR__ . '/../config/fractal.php') => base_path('config/fractal.php')
         ]);
 
         $this->mergeConfigFrom(
