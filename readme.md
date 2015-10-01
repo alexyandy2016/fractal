@@ -13,7 +13,7 @@ Among **1. METHOD**, **2. RESOURCE**, and **3. RESPONSE**, which is 3 pillars of
 
 I know RESTful API is a big topic. Take a deep breadth, and let's get start. One caveat before get started is that REST is not a strict spec or rule, but a guideline. The more RESTful, the easier to be read by your API clients.
 
-**`Note`** _A slide explaining RESTful API is available at [http://bit.ly/restful-api](http://bit.ly/restful-api). A code base for RESTful API web service that utilize this package is available at [https://github.com/appkr/rest](https://github.com/appkr/rest)._
+**`Note`** _A slide explaining RESTful API is available at [http://bit.ly/restful-api](http://bit.ly/restful-api). A code base for RESTful API service that utilize this package is available at [https://github.com/appkr/rest](https://github.com/appkr/rest)._
 
 ###GOAL OF THIS PACKAGE
 
