@@ -167,7 +167,7 @@ The package is bundled with a simple API example. It includes:
 - Transformer
 - Integration Test
 
-Follow the guide to activate the example.
+Follow the guide to activate and test the example.
 
 **Step #1:** Activate examples
 
@@ -184,14 +184,14 @@ $ php artisan migrate --path="vendor/appkr/fractal/database/migrations"
 $ php artisan db:seed --class="Appkr\Fractal\Example\DatabaseSeeder"
 ```
 
-**Step #3:** Boot up a test server and open at a browser
+**Step #3:** Boot up a local server and open at a browser
 
 ```bash
 // Boot up a local server
 $ php artisan serve
 ```
 
-Head on to `http://localhost:8000/v1/things`, and you should see well formatted json response.
+Head on to `http://localhost:8000/v1/things`, and you should see a well formatted json response.
 
 **Step #4:** [OPTIONAL] Run integration test
 
@@ -203,7 +203,7 @@ $ phpunit vendor/appkr/fractal/src/example/ThingApiTestForLaravel.php
 $ phpunit vendor/appkr/fractal/src/example/ThingApiTestForLumen.php
 ```
 
-**`Note`** If you finished evaluating the example, don't forget to rollback the migration and re-comment the unnecessary lines at `ApiServiceProvider`.
+**`Note`** _If you finished evaluating the example, don't forget to rollback the migration and re-comment the unnecessary lines at `ApiServiceProvider`._
 
 ---
 
@@ -224,21 +224,21 @@ respond(array $payload);
 withCollection(
     \Illuminate\Database\Eloquent\Collection $collection, 
     \League\Fractal\TransformerAbstract|null $transformer, 
-    string $resourceKey // for JsonApiSerializer only
+    string|null $resourceKey // for JsonApiSerializer only
 );
 
 // Respond single item
 withItem(
     \Illuminate\Database\Eloquent\Model $model, 
     \League\Fractal\TransformerAbstract|null $transformer, 
-    string $resourceKey // for JsonApiSerializer only
+    string|null $resourceKey // for JsonApiSerializer only
 );
 
 // Respond collection of resources with pagination
 withPagination(
     \Illuminate\Contracts\Pagination\LengthAwarePaginator $paginator, 
     \League\Fractal\TransformerAbstract|null $transformer, 
-    string $resourceKey // for JsonApiSerializer only
+    string|null $resourceKey // for JsonApiSerializer only
 );
 
 // Respond json formatted success message
@@ -257,30 +257,30 @@ noContent();
 // This is another base method. Every other error responses use this.
 // If an instance of \Exception is given as an argument,
 // this class does its best to properly format a message and status code
-error(string|array|\Exception $message);
+error(string|array|\Exception|null $message);
 
 // Respond 401
 // Note that this actually means unauthenticated
-unauthorizedError(string|array $message);
+unauthorizedError(string|array|null $message);
 
 // Respond 403
 // Note that this actually means unauthorized
-forbiddenError(string|array $message);
+forbiddenError(string|array|null $message);
 
 // Respond 404
-notFoundError(string|array $message);
+notFoundError(string|array|null $message);
 
 // Respond 406
-notAcceptableError(string|array $message);
+notAcceptableError(string|array|null $message);
 
 // Respond 409
-conflictError(string|array $message);
+conflictError(string|array|null $message);
 
 // Respond 422
-unprocessableError(string|array $message);
+unprocessableError(string|array|null $message);
 
 // Respond 500
-internalError(string|array $message);
+internalError(string|array|null $message);
 
 // Set http status code
 // This method is chainable
@@ -297,10 +297,10 @@ setMeta(array $meta);
 
 ####AVAILABLE HELPER METHODS
 ```
-// Determine the current framework is Laravel
+// Determine if the current framework is Laravel
 is_laravel();
 
-// Determine the current framework is Lumen
+// Determine if the current framework is Lumen
 is_lumen();
 
 // Determine if the current version of framework is based on 5.1
