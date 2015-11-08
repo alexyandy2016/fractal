@@ -5,25 +5,35 @@
 [![Latest Unstable Version](https://poser.pugx.org/appkr/fractal/v/unstable)](https://packagist.org/packages/appkr/fractal) 
 [![License](https://poser.pugx.org/appkr/fractal/license)](https://packagist.org/packages/appkr/fractal)
 
+#INDEX
+
+- [ABOUT](#about)
+- [GOAL OF THIS PACKAGE](#goal)
+- [LARAVEL/LUMEN IMPLEMENTATION EXAMPLE](#example)
+- [HOW TO INSTALL](#install)
+- [BUNDLED EXAMPLE](#example)
+- [AVAILABLE RESPONSE METHOD](#method)
+
+---
+
+<a name="about"></a>
 ##ABOUT
 
 This is a package, or rather an **opinionated/laravelish use case of the famous [`league/fractal`](https://github.com/thephpleague/fractal) package for Laravel 5 and Lumen**. This package was started to fulfill a personal RESTful API service needs. And provided as a separate package, hoping users quickly build his/her RESTful API. 
 
-Among **1. METHOD**, **2. RESOURCE**, and **3. RESPONSE**, which is 3 pillars of REST, this package is mainly focusing on a **3. RESPONSE(=view layer)**. For others, I recommend you to follow Laravel/Lumen's native usage. By reading this readme and following along the bundled examples, I hope you understand REST principles, and build a beautiful APIs that everybody can understand easily.
+Among **1. METHOD**, **2. RESOURCE**, and **3. RESPONSE**, which is 3 pillars of REST, this package is mainly focusing on a **3. RESPONSE(=view layer)**. By reading this readme and following along the bundled examples, I hope you understand REST principles, and build a beautiful APIs that everybody can understand easily.
 
-I know RESTful API is a big topic. Take a deep breadth, and let's get start. One caveat before get started is that REST is not a strict spec or rule, but a guideline. The more RESTful, the easier to be read by your API clients.
+I know RESTful API is a big topic. Note that REST is not a strict spec or rule, but just a guideline. The more RESTful, the easier to be read by your API consumers.
 
-**`Note`** _A slide explaining RESTful API is available at [RESTful API 제대로 만들기 by Appkr](http://bit.ly/restful-api), [RESTful API Design by apigee](http://www.slideshare.net/apigee/restful-api-design-second-edition). A code base for RESTful API service that utilize this package is available at [https://github.com/appkr/rest](https://github.com/appkr/rest)._
-
-###GOAL OF THIS PACKAGE
+<a name="goal"></a>
+##GOAL OF THIS PACKAGE
 
 1. Provides easy access to the `league/fractal`'s core instance (ServiceProvider).
 2. Provides easy way of make transformed/serialized http response.
-3. Provides configuration capability for the `league/fractal` and API response format.
+3. Provides configuration capability for the response format.
 4. Provides examples, so that users can quickly copy &amp; paste into his/her project.
 
----
-
+<a name="example"></a>
 ##LARAVEL/LUMEN IMPLEMENTATION EXAMPLE
 
 **1. METHOD** and **2. RESOURCE** can be easily handled by Laravel/Lumen routes file, `app/Http/routes.php`.
@@ -36,7 +46,7 @@ Route::resource(
 );
 ```
 
-In response to Laravel/Lumen route definition, `Appkr\Fractal\Http\Response` instance is being injected into `ThingsController` to properly make JSON responses in RESTful fashion (**3. RESPONSE**).
+In response to Laravel/Lumen route definition, `Appkr\Fractal\Http\Response` instance is being injected into `ThingsController` to properly format JSON responses in RESTful fashion (**3. RESPONSE**).
 
 ```php
 <?php
@@ -102,34 +112,14 @@ class ThingsController extends Controller
 }
 ```
 
----
-
-##INDEX
-
-- [PACKAGE INSTALL](#install)
-- [BUNDLED EXAMPLE](#example)
-- [AVAILABLE RESPONSE METHOD](#method)
-
----
-
 <a name="install"></a>
-##PACKAGE INSTALL
+##HOW TO INSTALL
 
 **Setp #1:** Composer.
 
-```json
-// composer.json
-"require": {
-  "appkr/fractal": "0.5.*",
-  "league/fractal": "@dev",
-}
-```
-
 ```bash
-$ composer update
+$ composer require "appkr/fractal: 0.6.*"
 ```
-
-**`Important`** _This package depends on the `setMeta()` api of the `league/fractal` which is available only at 0.13.*@dev. But the `league/fractal` has not yet been tagged as stable, so we need to explicitly designate `league/fractal` version at our root project's composer.json. Note that I will update this readme as soon as the `league/fractal` being tagged._
 
 **Step #2:** Add the service provider.
 
@@ -153,8 +143,6 @@ $ php artisan vendor:publish --provider="Appkr\Fractal\ApiServiceProvider"
 The config file is located at `config/fractal.php`.
 
 Done !
-
----
 
 <a name="example"></a>
 ##BUNDLED EXAMPLE
@@ -205,12 +193,10 @@ $ phpunit vendor/appkr/fractal/src/example/ThingApiTestForLumen.php
 
 **`Note`** _If you finished evaluating the example, don't forget to rollback the migration and re-comment the unnecessary lines at `ApiServiceProvider`._
 
----
-
 <a name="method"></a>
 ##AVAILABLE RESPONSE METHODS
 
-The following is a list of response methods that `Appkr\Fractal\Http\Response` provides, and that you can use in `YourController` to format API response.
+The following is the full list of response methods that `Appkr\Fractal\Http\Response` provides, and that you can use in `YourController` to format API response.
 
 ```php
 // Generic response. 
@@ -318,6 +304,6 @@ is_delete_request();
 
 ---
 
-##LICENSE
+##LICENSE & CONTRIBUTION
 
-[The MIT License](https://raw.githubusercontent.com/appkr/fractal/master/LICENSE)
+This package follows [MIT License](https://raw.githubusercontent.com/appkr/fractal/master/LICENSE). Issues and PRs are welcomed.
