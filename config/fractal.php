@@ -6,11 +6,12 @@ return [
     | API Endpoint pattern
     |--------------------------------------------------------------------------
     |
-    | This value will be used to bypass CSRF token check, to determine
-    | the current request is from an API client...
+    | Path 'pattern' used for bypassing the CSRF token check.
+    | Provide 'domain', if your api route is distinguished by domain name.
     |
     */
     'pattern' => 'v1/*',
+    'domain'  => 'api.example.com',
 
     /*
     |--------------------------------------------------------------------------

@@ -44,7 +44,9 @@ if (! function_exists('is_api_request')) {
      */
     function is_api_request()
     {
-        return app('request')->is(config('fractal.pattern')) or app('request')->ajax();
+        return starts_with(app('request')->getHttpHost(), config('fractal.domain'))
+            or app('request')->is(config('fractal.pattern'))
+            or app('request')->ajax();
     }
 }
 
@@ -75,5 +77,24 @@ if (! function_exists('is_delete_request')) {
 
         return strtolower(app('request')->input('_method')) == $needle
         or strtolower(app('request')->header('x-http-method-override')) == $needle;
+    }
+}
+
+if (! function_exists('json')) {
+    /**
+     * Instantiate Response class or make a json response.
+     *
+     * @param array $content
+     * @return \Appkr\Fractal\Http\Response|\Illuminate\Http\JsonResponse
+     */
+    function json($content = [])
+    {
+        $factory = app(\Appkr\Fractal\Http\Response::class);
+
+        if (func_num_args() === 0) {
+            return $factory;
+        }
+
+        return $factory->respond($content);
     }
 }

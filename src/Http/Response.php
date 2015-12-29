@@ -15,29 +15,43 @@ use League\Fractal\Serializer\JsonApiSerializer;
 
 class Response
 {
-    /** @var Manager */
+    /**
+     * @var \League\Fractal\Manager
+     */
     protected $fractal;
 
-    /** @var \Illuminate\Http\Request */
+    /**
+     * @var \Illuminate\Http\Request
+     */
     protected $request;
 
-    /** @var \Laravel\Lumen\Http\ResponseFactory|\Illuminate\Contracts\Routing\ResponseFactory */
+    /**
+     * @var \Laravel\Lumen\Http\ResponseFactory|\Illuminate\Contracts\Routing\ResponseFactory
+     */
     protected $response;
 
-    /** @var integer Http status code */
+    /**
+     * @var integer Http status code
+     */
     protected $statusCode = 200;
 
-    /** @var array Http response headers */
+    /**
+     * @var array Http response headers
+     */
     protected $headers = [];
 
-    /** @var string List of includes */
+    /**
+     * @var string List of includes
+     */
     protected $includes;
 
-    /** @var array List of meta data to append to the response body */
+    /**
+     * @var array List of meta data to append to the response body
+     */
     protected $meta = [];
 
     /**
-     * Response.
+     * Create new Response class.
      *
      * @param \League\Fractal\Manager             $fractal
      * @param \Illuminate\Http\Request            $request
@@ -57,7 +71,7 @@ class Response
      * @param array|null $payload
      * @return \Illuminate\Contracts\Http\Response
      */
-    public function respond($payload)
+    public function respond($payload = [])
     {
         if ($meta = $this->getMeta()) {
             $payload = array_merge(
@@ -234,7 +248,7 @@ class Response
      * @param string $message
      * @return \Illuminate\Contracts\Http\Response
      */
-    public function success($message)
+    public function success($message = 'Success')
     {
         return $this->respond(
             $this->format($message, config('fractal.successFormat'))
@@ -247,7 +261,7 @@ class Response
      * @param mixed $primitive
      * @return $this
      */
-    public function created($primitive)
+    public function created($primitive = 'Created')
     {
         $payload = null;
 
