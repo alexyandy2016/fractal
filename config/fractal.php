@@ -7,11 +7,26 @@ return [
     |--------------------------------------------------------------------------
     |
     | Path 'pattern' used for bypassing the CSRF token check.
-    | Provide 'domain', if your api route is distinguished by domain name.
+    | Provide 'domain', if our api route is distinguished by domain name.
     |
     */
     'pattern' => 'v1/*',
     'domain'  => 'api.example.com',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Transformer directory and namespace.
+    |--------------------------------------------------------------------------
+    |
+    | Below config will be applied when we run 'make:transformer' artisan cmd.
+    | The generated class will be saved at 'dir', and namespaced as you set.
+    | Note that the 'dir' should be relative to project root.
+    |
+    */
+    'transformer' => [
+        'dir' => 'app/Transformers',
+        'namespace' => 'App\\Transformers',
+    ],
 
     /*
     |--------------------------------------------------------------------------
