@@ -15,11 +15,6 @@
 - [CONFIG](#config)
 - [APIs](#method)
 - [BUNDLED EXAMPLE](#example)
-<<<<<<< HEAD
-- [APIs](#method)
-- [TRANSFORMER GENERATOR](#generator)
-=======
->>>>>>> ff6ad25... transformer generator added
 
 ---
 
@@ -33,17 +28,10 @@ Among **1. METHOD**, **2. RESOURCE**, and **3. RESPONSE**, which is 3 pillars of
 <a name="goal"></a>
 ## GOAL OF THIS PACKAGE
 
-<<<<<<< HEAD
-1. Provides easy access to the `league/fractal`'s core instance (ServiceProvider).
-2. Provides easy way of make transformed/serialized http response.
-3. Provides configuration capability for the response format.
-4. Provides make:transformer artisan command.
-=======
 1. Provides easy access to the `league/fractal`'s core instance (via ServiceProvider facility).
 2. Provides easy way of making transformed/serialized http response.
 3. Provides make:transformer artisan command.
 4. Provides configuration capability for the response format.
->>>>>>> ff6ad25... transformer generator added
 5. Provides examples, so that users can quickly copy &amp; paste into his/her project.
 
 <a name="example"></a>
@@ -51,11 +39,6 @@ Among **1. METHOD**, **2. RESOURCE**, and **3. RESPONSE**, which is 3 pillars of
 
 **1. METHOD** and **2. RESOURCE** can be easily handled by Laravel/Lumen routes file.
 
-<<<<<<< HEAD
-**1. METHOD** and **2. RESOURCE** can be easily handled by Laravel/Lumen routes file.
-
-=======
->>>>>>> ff6ad25... transformer generator added
 ### Define METHOD and RESOURCE in Laravel way.
 
 ```php
@@ -68,15 +51,9 @@ Route::resource(
 );
 ```
 
-<<<<<<< HEAD
-### Fill lacking support in RESPONSE for RESTful API
-
-Corresponding to Laravel/Lumen route definition, make your controller in RESTful fashion by injecting `Appkr\Fractal\Http\Response` or with `json()` Helper (**3. RESPONSE**).
-=======
-### Fill missing shomething for RESTful API with Response class
+### Fill missing feature for RESTful API with Response class
 
 Corresponding to Laravel/Lumen route definition, you can implement your controller in RESTful fashion by injecting `Appkr\Fractal\Http\Response` or with `json()` Helper (**3. RESPONSE**).
->>>>>>> ff6ad25... transformer generator added
 
 ### Use Case
 
@@ -151,10 +128,6 @@ $ composer require "appkr/fractal: 0.6.*"
 
 ```php
 // config/app.php (Laravel)
-<<<<<<< HEAD
-
-=======
->>>>>>> ff6ad25... transformer generator added
 'providers'=> [
     Appkr\Fractal\ApiServiceProvider::class,
 ]
@@ -166,12 +139,7 @@ $app->register(Appkr\Fractal\ApiServiceProvider::class);
 ### **Step #3:** [OPTIONAL] Publish assets.
 
 ```bash
-<<<<<<< HEAD
-# For Laravel only
-
-=======
 # Laravel only
->>>>>>> ff6ad25... transformer generator added
 $ php artisan vendor:publish --provider="Appkr\Fractal\ApiServiceProvider"
 ```
 
@@ -182,70 +150,30 @@ Done !
 <a name="transformer"></a>
 ## TRANSFORMER
 
-<<<<<<< HEAD
-The package is bundled with a set of example. It includes:
-=======
 ### What?
->>>>>>> ff6ad25... transformer generator added
 
 You should implement it by yourself. For more about what is it, what you can do with this, and why it is neeeded, [see this page](http://fractal.thephpleague.com/transformers/)
 
 ### Generator
 
-<<<<<<< HEAD
-### **Step #1:** Activate examples
-
-```php
-// Uncomment the line at vendor/appkr/fractal/src/ApiServiceProvider.php
-
-$this->publishExamples();
-```
-
-### **Step #2:** Migrate and seed tables
-
-```bash
-# Migrate/seed tables at a console
-
-$ php artisan migrate --path="vendor/appkr/fractal/database/migrations"
-$ php artisan db:seed --class="Appkr\Fractal\Example\DatabaseSeeder"
-```
-
-### **Step #3:** Boot up a server and open at a browser
-
-```bash
-# Boot up a server
-
-$ php artisan serve
-```
-=======
 Luckily this package ships with an artisan command conveniently generates a transformer class.
 
 ```bash
 $ php artisan make:transformer {subject} {--includes=}
 ```
 
-- `subject` : The string name of the model class. e.g. App\\Book
-- `includes` : Optional list of resources to include. e.g. App\\User:author,App\\Comment:comments:true. If the third element is provided as true, yes, or 1, the command will interpret the include as a collection.
+- `subject` : The string name of the model class. e.g. App\\\\Book
+- `includes` : Optional list of resources to include. e.g. App\\\\User:author,App\\\\Comment:comments:true. If the third element is provided as true, yes, or 1, the command will interpret the include as a collection.
 
+**`Note`** You should always use double back slashes (\\\\), when passing class name in artisan command.
 
 A generated file will look like this:
 
 ```php
 <?php
->>>>>>> ff6ad25... transformer generator added
 
 namespace App\Transformers;
 
-<<<<<<< HEAD
-### **Step #4:** [OPTIONAL] Run integration test
-
-```bash
-# Laravel
-$ phpunit vendor/appkr/fractal/src/example/ThingApiTestForLaravel.php
-
-# Lumen
-$ phpunit vendor/appkr/fractal/src/example/ThingApiTestForLumen.php
-=======
 use App\Book;
 use League\Fractal;
 use League\Fractal\ParamBag;
@@ -333,7 +261,6 @@ class BookTransformer extends TransformerAbstract
         return $this->collection($comments, new \App\Transformers\CommentTransformer);
     }
 }
->>>>>>> ff6ad25... transformer generator added
 ```
 
 <a name="transformer"></a>
@@ -343,23 +270,12 @@ Skim thorough the `config/fractal.php`. Inline documented. I think I did my best
 
 <a name="method"></a>
 ## APIs
-<<<<<<< HEAD
 
 The following is the full list of response methods that `Appkr\Fractal\Http\Response` provides. You should use in `YourController` to format API response.
 
-=======
-
-The following is the full list of response methods that `Appkr\Fractal\Http\Response` provides. You should use in `YourController` to format API response.
-
->>>>>>> ff6ad25... transformer generator added
 ### AVAILABLE RESPONSE METHODS
 
 ```php
-// Make JSON response
-// Returns Appkr\Fractal\Http\Response object if no argument given,
-// from there you can chain any methods listed subsequently.
-json(array|null $payload)
-
 // Generic response. 
 // If valid callback parameter is provided, jsonp response can be provided.
 // This is a very base method. All other responses are utilizing this.
@@ -443,7 +359,12 @@ setMeta(array $meta);
 ```
 
 ###AVAILABLE HELPER METHODS
-```
+```php
+// Make JSON response
+// Returns Appkr\Fractal\Http\Response object if no argument given,
+// from there you can chain any methods listed subsequently.
+json(array|null $payload)
+
 // Determine if the current framework is Laravel
 is_laravel();
 
@@ -463,117 +384,6 @@ is_update_request();
 is_delete_request();
 ```
 
-<<<<<<< HEAD
-<a name="generator"></a>
-## TRANSFORMER GENERATOR
-
-This package ships with convenient transformer generation artisan command. For more about transformer, what is it and what you can do with this, [see this page](http://fractal.thephpleague.com/transformers/).
-
-```bash
-$ php artisan make:transformer {subject} {--includes=}
-```
-
-- `subject` : The string name of the model class. e.g. App\\Book
-- `includes` : Optional list of resources to include. e.g. App\\User:author,App\\Comment:comments:true. If the third element is provided as true, yes, or 1, the command will interpret the include as a collection.
-
-
-A generated file will look like this:
-
-```php
-<?php
-
-namespace App\Transformers;
-
-use App\Book;
-use League\Fractal;
-use League\Fractal\ParamBag;
-use League\Fractal\TransformerAbstract;
-
-class BookTransformer extends TransformerAbstract
-{
-    /**
-     * List of resources possible to include using url query string.
-     * e.g. collection case -> ?include=comments:limit(5|1):order(created_at|desc)
-     *      item case       -> ?include=author
-     *
-     * @var array
-     */
-    protected $availableIncludes = ['author', 'comments'];
-
-    /**
-     * List of resources to include automatically/always.
-     *
-     * @var array
-     */
-    protected $defaultIncludes = ['author', 'comments'];
-
-    /**
-     * List of extra parameters when including other resources.
-     * This is only applicable when including a collection.
-     */
-    private $validParams = ['limit', 'order'];
-
-    /**
-     * Transform single resource.
-     *
-     * @param \App\Book $book
-     * @return array
-     */
-    public function transform(Book $book)
-    {
-        return [
-            'id' => (int) $book->id,
-            // ...
-            'created' => $book->created_at->toIso8601String(),
-            'link' => [
-                 'rel' => 'self',
-                 'href' => route('books.show', $book->id),
-            ],
-        ];
-    }
-
-    /**
-     * Include author.
-     *
-     * @param \App\Book $book
-     * @return \League\Fractal\Resource\Item
-     */
-    public function includeAuthor(Book $book)
-    {
-        return $this->item($book->author, new \App\Transformers\UserTransformer);
-    }
-    
-    /**
-     * Include comments.
-     *
-     * @param \App\Book $book
-     * @param \League\Fractal\ParamBag
-     * @return \League\Fractal\Resource\Item
-     * @throws \Exception
-     */
-    public function includeComments(Book $book, ParamBag $params)
-    {
-        $usedParams = array_keys(iterator_to_array($params));
-
-        if ($invalidParams = array_diff($usedParams, $this->validParams)) {
-            throw new \Exception(sprintf('Invalid param(s): "%s". Valid param(s): "%s"', implode(',', $usedParams), implode(',', $this->validParams)));
-        }
-
-        list($limit, $offset) = $params->get('limit') ?: [5,1];
-        list($orderCol, $orderBy) = $params->get('order') ?: ['created_at', 'desc'];
-
-        $comments = $book->comments
-            ->take($limit)
-            ->skip($offset)
-            ->orderBy($orderCol, $orderBy)
-            ->get();
-
-        return $this->collection($comments, new \App\Transformers\CommentTransformer);
-    }
-}
-```
-
-=======
 <a name="example"></a>
 ##BUNDLED EXAMPLE
 
@@ -626,7 +436,6 @@ $ phpunit vendor/appkr/fractal/src/example/ThingApiTestForLumen.php
 
 **`Note`** _If you finished evaluating the example, don't forget to rollback the migration and re-comment the unnecessary lines at `ApiServiceProvider`._
 
->>>>>>> ff6ad25... transformer generator added
 ---
 
 ##LICENSE & CONTRIBUTION
