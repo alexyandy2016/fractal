@@ -18,7 +18,9 @@
     "league/fractal": "0.13.*"
   },
   "require-dev": {
-    "fzaninotto/faker": "1.5.*"
+    "fzaninotto/faker": "1.5.*",
+    "phpunit/phpunit": "^5.1",
+    "illuminate/console": "~5.0"
   },
   "autoload": {
     "psr-4": {
@@ -27,6 +29,11 @@
     "files": [
       "src/helpers.php"
     ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Test\\": "tests/"
+    }
   },
   "extra": {
     "branch-alias": {
