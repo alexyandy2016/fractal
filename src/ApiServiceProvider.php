@@ -38,6 +38,8 @@ class ApiServiceProvider extends ServiceProvider
         $this->app->alias(Fractal::class, 'api.provider');
 
         $this->app->bind('api.response', Response::class);
+
+        $this->registerMakeTransfomerCommand();
     }
 
     /**
@@ -72,5 +74,16 @@ class ApiServiceProvider extends ServiceProvider
             $app = $this->app;
             include __DIR__ . '/./example/routes-lumen.php';
         }
+    }
+
+    /**
+     * Register make:transformer command.
+     */
+    protected function registerMakeTransfomerCommand()
+    {
+        $this->app->singleton('api.make.transformer', function ($app) {
+            return $app['Appkr\Fractal\Commands\MakeTransformerCommand'];
+        });
+        $this->commands('api.make.transformer');
     }
 }
